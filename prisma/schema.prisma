@@ -33,6 +33,6 @@ model Journey {
   returnId      Int
   departureTime DateTime
   returnTime    DateTime
-  distance      Float
+  distance      Int
   duration      Int
 }

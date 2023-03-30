@@ -5,6 +5,12 @@ import * as path from 'path';
 import { journeySchema } from '../utils/seeding';
 const prisma = new PrismaClient();
 
+/**
+ * This function will read the given csv file and execute the given function on each row of data.
+ * @param filepath path to the csv file
+ * @param dataHandler function that will be executed on each row of data.
+ * @optional renamedHeaders
+ */
 const handleCsvImport = async (
   filepath: string,
   dataHandler: (data: any) => any,
@@ -22,6 +28,9 @@ const handleCsvImport = async (
     .on('end', (rowCount) => console.log(`Parsed ${rowCount} rows.`));
 };
 
+/**
+ * This function will seed the database with stations data.
+ */
 const seedStations = async () => {
   const stationsPath = path.resolve(__dirname, '__fixtures__', 'stations.csv');
   const stations = [];
@@ -41,6 +50,9 @@ const seedStations = async () => {
   await prisma.station.createMany({ data: stations });
 };
 
+/**
+ * This function will seed the database with journeys data.
+ */
 const seedJourneys = async () => {
   const journeysPath = path.resolve(
     __dirname,
@@ -64,7 +76,9 @@ const seedJourneys = async () => {
               return: { connect: { id: castedJourney.returnId } },
               departureTime: castedJourney.departureTime,
               returnTime: castedJourney.returnTime,
-              distance: castedJourney.distance,
+              distance: Number.isInteger(castedJourney.distance)
+                ? castedJourney.distance
+                : Math.floor(castedJourney.distance),
               duration: castedJourney.duration,
             },
           })
@@ -86,6 +100,10 @@ const seedJourneys = async () => {
   await Promise.all(journeysPromises);
 };
 
+/**
+ * Function that will get executed on "seed" command.
+ * All the seeding functions should be called here.
+ */
 const main = async () => {
   await seedStations().then(() => seedJourneys());
 };
