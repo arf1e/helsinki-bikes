@@ -82,7 +82,9 @@ const seedJourneys = async () => {
               duration: castedJourney.duration,
             },
           })
-          .catch((e) => null),
+          .catch(() =>
+            console.log(`Skipping journey: ${JSON.stringify(castedJourney)}`),
+          ),
       );
     }
   };
