@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { JourneyPaginationQueryDto } from 'src/common/dto/journey-pagination-query.dto';
 import { JourneysService } from './journeys.service';
 
@@ -9,10 +9,5 @@ export class JourneysController {
   @Get()
   findAll(@Query() journeyPaginationQuery: JourneyPaginationQueryDto) {
     return this.journeysService.findMany(journeyPaginationQuery);
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: number) {
-    return this.journeysService.findOne(id);
   }
 }

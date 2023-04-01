@@ -1,5 +1,4 @@
-import { Type } from 'class-transformer';
-import { IsOptional, IsPositive, IsString, IsEnum } from 'class-validator';
+import { IsOptional, IsPositive, IsEnum } from 'class-validator';
 
 enum SortBy {
   DISTANCE = 'distance',

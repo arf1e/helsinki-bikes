@@ -7,10 +7,6 @@ import { kmToMeters, minutesToSeconds } from 'utils/journeys';
 export class JourneysService {
   constructor(private prisma: PrismaService) {}
 
-  async findOne(id: number) {
-    return this.prisma.journey.findUnique({ where: { id } });
-  }
-
   async findMany(query: JourneyPaginationQueryDto) {
     const page = query.page || 1;
     const documentsPerPage = 12;
@@ -19,11 +15,13 @@ export class JourneysService {
         departure: {
           name: {
             startsWith: query.departureStationName,
+            mode: 'insensitive',
           },
         },
         return: {
           name: {
             startsWith: query.returnStationName,
+            mode: 'insensitive',
           },
         },
         distance: {
