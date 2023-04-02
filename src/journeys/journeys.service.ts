@@ -8,10 +8,15 @@ import { JOURNEYS_PER_PAGE } from './journeys.constants';
 export class JourneysService {
   constructor(private prisma: PrismaService) {}
 
-  async findMany(query: JourneyPaginationQueryDto) {
-    const page = query.page || 1;
-    const documentsPerPage = JOURNEYS_PER_PAGE;
-    return this.prisma.journey.findMany({
+  /**
+   * This method constructs the filtering part of the database query
+   * @param query Query object containing current page, filters and sorting options
+   * @returns Object of type {where: ...} containing filtering rules according to the given query
+   */
+  private constructFiltersByQuery(query: JourneyPaginationQueryDto): {
+    where: object;
+  } {
+    return {
       where: {
         ...(query.departureStationName && {
           departure: {
@@ -42,13 +47,45 @@ export class JourneysService {
           }),
         },
       },
+    };
+  }
+
+  /**
+   * This method constructs the sorting part of the database query
+   * @param query Query object containing current page, filters and sorting options
+   * @returns Object of type {orderBy: ...} containing sorting rules according to the given query
+   */
+  private constructSortingByQuery(query: JourneyPaginationQueryDto) {
+    return {
       ...(query.sortBy && {
         orderBy: {
           [query.sortBy]: query.sortOrder,
         },
       }),
+    };
+  }
+
+  private constructPaginationByQuery(query: JourneyPaginationQueryDto): {
+    skip: number;
+    take: number;
+  } {
+    const page = query.page || 1;
+    const documentsPerPage = JOURNEYS_PER_PAGE;
+    return {
       skip: (page - 1) * documentsPerPage,
       take: documentsPerPage,
+    };
+  }
+
+  private async getJourneysByQuery(query: JourneyPaginationQueryDto) {
+    const filters = this.constructFiltersByQuery(query);
+    const sorting = this.constructSortingByQuery(query);
+    const pagination = this.constructPaginationByQuery(query);
+
+    return this.prisma.journey.findMany({
+      ...filters,
+      ...sorting,
+      ...pagination,
       include: {
         departure: {
           select: {
@@ -62,5 +99,14 @@ export class JourneysService {
         },
       },
     });
+  }
+
+  /**
+   * Interface method to access the database for journeys
+   * @param query Query object containing current page, filters and sorting options
+   * @returns Promise resolving to an array of journeys
+   */
+  async findMany(query: JourneyPaginationQueryDto) {
+    return this.getJourneysByQuery(query);
   }
 }
