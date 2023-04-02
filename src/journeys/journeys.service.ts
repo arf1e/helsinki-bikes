@@ -65,6 +65,11 @@ export class JourneysService {
     };
   }
 
+  /**
+   * This method constructs the pagination part of the database query
+   * @param query Query object containing current page, filters and sorting options
+   * @returns Object of type {skip: number, take: number} responsible for pagination in Prisma queries
+   */
   private constructPaginationByQuery(query: JourneyPaginationQueryDto): {
     skip: number;
     take: number;
@@ -77,6 +82,11 @@ export class JourneysService {
     };
   }
 
+  /**
+   * This method queries the database for journeys based on given query options.
+   * @param query Query object containing current page, filters and sorting options
+   * @returns Promise resolving to an array of journeys
+   */
   private async getJourneysByQuery(query: JourneyPaginationQueryDto) {
     const filters = this.constructFiltersByQuery(query);
     const sorting = this.constructSortingByQuery(query);
@@ -107,6 +117,7 @@ export class JourneysService {
    * @returns Promise resolving to an array of journeys
    */
   async findMany(query: JourneyPaginationQueryDto) {
-    return this.getJourneysByQuery(query);
+    const journeys = await this.getJourneysByQuery(query);
+    return journeys;
   }
 }

@@ -1,9 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import {
   DESTINATION_FROM,
   DESTINATION_TO,
   DESTINATION_TYPE,
+  STATIONS_PER_PAGE,
 } from './stations.constants';
 import { StationPaginationQueryDto } from 'src/common/dto/station-pagination-query.dto';
 
@@ -66,7 +71,7 @@ export class StationsService {
       },
       take: 5,
     });
-
+    console.log('GROUPBY RESULT', topStationsIdsArray);
     /*
       As the 'include' option is not supported by 'groupBy', we need to retrieve station names by querying the database. 
       We can use Promise.all since it maintains the order of promises.
@@ -87,10 +92,45 @@ export class StationsService {
   }
 
   /**
-   * This method queries the database for station with the given id and returns all the station data,
-   * including most popular stations and journeys count.
-   * @param id
-   * @returns
+   * This method constructs the filtering part of the database query
+   * @param query Query object containing current page and filtering options
+   * @returns Object of type {where: ...} containing filtering rules accroding to the given query
+   */
+  private constructFiltersByQuery(query: StationPaginationQueryDto): {
+    where: object;
+  } {
+    return {
+      where: {
+        ...(query.name && {
+          name: {
+            startsWith: query.name,
+            mode: 'insensitive',
+          },
+        }),
+      },
+    };
+  }
+
+  /**
+   * This method constructs the pagination part of the database query
+   * @param query Query object containing current page and filtering options
+   * @returns Object of type {skip: number, take: number} responsible for pagination in Prisma queries
+   */
+  private constructPaginationByQuery(query: StationPaginationQueryDto): {
+    skip: number;
+    take: number;
+  } {
+    const page = query.page || 1;
+    return {
+      skip: (page - 1) * STATIONS_PER_PAGE,
+      take: STATIONS_PER_PAGE,
+    };
+  }
+
+  /**
+   * Interface method to access the database for one station by its id.
+   * @param id Station id
+   * @returns Station data, including most popular stations and journeys count. If the station with given id does not exists, throws NotFoundException.
    */
   async findOne(id: number) {
     const station = await this.prisma.station.findUnique({ where: { id } });
@@ -124,19 +164,18 @@ export class StationsService {
     };
   }
 
+  /**
+   * Interface method to access the database for stations
+   * @param query Query object containing current page and filtering options
+   * @returns Promise resolving to an array of stations
+   */
   async findMany(query: StationPaginationQueryDto) {
-    const page = query.page || 1;
-    const documentsPerPage = 30;
+    const filters = this.constructFiltersByQuery(query);
+    const pagination = this.constructPaginationByQuery(query);
 
     return this.prisma.station.findMany({
-      where: {
-        name: {
-          startsWith: query.name,
-          mode: 'insensitive',
-        },
-      },
-      skip: (page - 1) * documentsPerPage,
-      take: documentsPerPage,
+      ...filters,
+      ...pagination,
       select: {
         id: true,
         name: true,

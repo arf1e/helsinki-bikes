@@ -6,15 +6,22 @@ import { kmToMeters, minutesToSeconds } from 'utils/journeys';
 
 describe('JourneysService', () => {
   let service: JourneysService;
-  let prismaService: PrismaService;
+
+  const mockPrismaService = {
+    journey: {
+      findMany: jest.fn(),
+    },
+  };
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [JourneysService, PrismaService],
+      providers: [
+        JourneysService,
+        { provide: PrismaService, useValue: mockPrismaService },
+      ],
     }).compile();
 
     service = module.get<JourneysService>(JourneysService);
-    prismaService = module.get<PrismaService>(PrismaService);
   });
 
   it('should be defined', () => {
@@ -35,11 +42,11 @@ describe('JourneysService', () => {
 
   describe('findMany', () => {
     it('queries db without filters', async () => {
-      jest.spyOn(prismaService.journey, 'findMany');
+      mockPrismaService.journey.findMany.mockResolvedValue([]);
 
       await service.findMany(baseJourneyQuery);
 
-      expect(prismaService.journey.findMany).toHaveBeenCalledWith({
+      expect(mockPrismaService.journey.findMany).toHaveBeenCalledWith({
         where: {
           distance: {},
           duration: {},
@@ -62,11 +69,11 @@ describe('JourneysService', () => {
     });
 
     it('handles pagination', async () => {
-      jest.spyOn(prismaService.journey, 'findMany');
+      mockPrismaService.journey.findMany.mockResolvedValue([]);
       const page = 10;
       await service.findMany({ ...baseJourneyQuery, page });
 
-      expect(prismaService.journey.findMany).toHaveBeenCalledWith({
+      expect(mockPrismaService.journey.findMany).toHaveBeenCalledWith({
         where: {
           distance: {},
           duration: {},
@@ -89,7 +96,7 @@ describe('JourneysService', () => {
     });
 
     it('handles filtering and sorting', async () => {
-      jest.spyOn(prismaService.journey, 'findMany');
+      mockPrismaService.journey.findMany.mockResolvedValue([]);
       const query = {
         departureStationName: 'te',
         returnStationName: 'st',
@@ -103,7 +110,7 @@ describe('JourneysService', () => {
       };
       await service.findMany(query);
 
-      expect(prismaService.journey.findMany).toHaveBeenCalledWith({
+      expect(mockPrismaService.journey.findMany).toHaveBeenCalledWith({
         where: {
           distance: {
             gte: kmToMeters(query.minDistance),
