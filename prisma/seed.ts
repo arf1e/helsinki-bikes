@@ -2,7 +2,12 @@ import { PrismaClient } from '@prisma/client';
 import { createReadStream } from 'fs';
 import * as csv from 'fast-csv';
 import * as path from 'path';
-import { journeySchema } from '../utils/seeding';
+import {
+  JOURNEYS_CSV_HEADERS,
+  STATIONS_CSV_HEADERS,
+  getJourneyValidationSchema,
+  stationSchema,
+} from '../utils/seeding';
 const prisma = new PrismaClient();
 
 /**
@@ -11,21 +16,28 @@ const prisma = new PrismaClient();
  * @param dataHandler function that will be executed on each row of data.
  * @optional renamedHeaders
  */
-const handleCsvImport = async (
+const handleCsvImport = (
   filepath: string,
   dataHandler: (data: any) => any,
   renamedHeaders?: string[],
 ) => {
-  await createReadStream(filepath)
-    .pipe(
-      csv.parse({
-        headers: true,
-        ...(renamedHeaders && { headers: renamedHeaders, renameHeaders: true }),
-      }),
-    )
-    .on('error', console.error)
-    .on('data', dataHandler)
-    .on('end', (rowCount) => console.log(`Parsed ${rowCount} rows.`));
+  return new Promise<void>((resolve, reject) => {
+    createReadStream(filepath)
+      .pipe(
+        csv.parse({
+          headers: true,
+          ...(renamedHeaders && {
+            headers: renamedHeaders,
+            renameHeaders: true,
+          }),
+        }),
+      )
+      .on('error', reject)
+      .on('data', dataHandler)
+      .on('end', () => {
+        resolve();
+      });
+  });
 };
 
 /**
@@ -34,72 +46,59 @@ const handleCsvImport = async (
 const seedStations = async () => {
   const stationsPath = path.resolve(__dirname, '__fixtures__', 'stations.csv');
   const stations = [];
-  const stationHandler = (station) => {
-    stations.push({
-      id: Number(station.ID),
-      name: station.Nimi.trim(),
-      city: station.Kaupunki.trim(),
-      capacity: Number(station.Kapasiteet),
-      address: station.Osoite.trim(),
-      operator: station.Operaattor.trim(),
-      x: station.x,
-      y: station.y,
-    });
+  const stationHandler = async (station) => {
+    let castedStation;
+    try {
+      castedStation = await stationSchema.cast(station, { stripUnknown: true });
+    } catch (e) {
+      console.log(`Failed to process station: ${JSON.stringify(station)}`);
+    }
+    const shouldAddStation = await stationSchema.isValid(castedStation);
+    if (shouldAddStation) {
+      stations.push(castedStation);
+    }
   };
-  await handleCsvImport(stationsPath, stationHandler);
-  await prisma.station.createMany({ data: stations });
+
+  await handleCsvImport(stationsPath, stationHandler, STATIONS_CSV_HEADERS);
+  await prisma.station
+    .createMany({ data: stations, skipDuplicates: true })
+    .catch(console.error);
 };
 
 /**
  * This function will seed the database with journeys data.
  */
-const seedJourneys = async () => {
-  const journeysPath = path.resolve(
-    __dirname,
-    '__fixtures__',
-    'journeys-may.csv',
-  );
-  const journeysPromises = [];
+const seedJourneys = async (stationIds: number[], filename: string) => {
+  const journeysPath = path.resolve(__dirname, '__fixtures__', filename);
+  const journeysToInsert = [];
+  const journeysSchema = getJourneyValidationSchema(stationIds);
   const journeysHandler = async (journeyInput) => {
-    const castedJourney = await journeySchema.cast(journeyInput, {
-      stripUnknown: true,
-    });
-    const shouldAddJourney = await journeySchema.isValid(castedJourney);
-    if (!shouldAddJourney) {
+    let castedJourney;
+    try {
+      castedJourney = journeysSchema.cast(journeyInput, {
+        stripUnknown: true,
+      });
+    } catch (e) {
+      console.log(`Failed to process journey: ${JSON.stringify(journeyInput)}`);
     }
+    const shouldAddJourney = await journeysSchema.isValid(castedJourney);
     if (shouldAddJourney) {
-      journeysPromises.push(
-        prisma.journey
-          .create({
-            data: {
-              departure: { connect: { id: castedJourney.departureId } },
-              return: { connect: { id: castedJourney.returnId } },
-              departureTime: castedJourney.departureTime,
-              returnTime: castedJourney.returnTime,
-              distance: Number.isInteger(castedJourney.distance)
-                ? castedJourney.distance
-                : Math.floor(castedJourney.distance),
-              duration: castedJourney.duration,
-            },
-          })
-          .catch(() =>
-            console.log(`Skipping journey: ${JSON.stringify(castedJourney)}`),
-          ),
-      );
+      journeysToInsert.push({
+        ...castedJourney,
+        distance: Number.isInteger(castedJourney.distance)
+          ? castedJourney.distance
+          : Math.floor(castedJourney.distance),
+      });
     }
   };
-  const journeysCsvHeaders = [
-    'departureTime',
-    'returnTime',
-    'departureId',
-    'departureName',
-    'returnId',
-    'returnName',
-    'distance',
-    'duration',
-  ];
-  await handleCsvImport(journeysPath, journeysHandler, journeysCsvHeaders);
-  await Promise.all(journeysPromises);
+
+  await handleCsvImport(journeysPath, journeysHandler, JOURNEYS_CSV_HEADERS);
+  await prisma.journey
+    .createMany({
+      data: journeysToInsert,
+      skipDuplicates: true,
+    })
+    .catch((e) => console.log(e));
 };
 
 /**
@@ -107,7 +106,16 @@ const seedJourneys = async () => {
  * All the seeding functions should be called here.
  */
 const main = async () => {
-  await seedStations().then(() => seedJourneys());
+  console.time('Seeding');
+  await seedStations();
+  const stations = await prisma.station.findMany({ select: { id: true } });
+  const stationIds = stations.map((station) => station.id);
+
+  await Promise.all([
+    seedJourneys(stationIds, 'journeys-may.csv'),
+    seedJourneys(stationIds, 'journeys-june.csv'),
+    seedJourneys(stationIds, 'journeys-july.csv'),
+  ]).then(() => console.timeEnd('Seeding'));
 };
 
 main().finally(async () => {
