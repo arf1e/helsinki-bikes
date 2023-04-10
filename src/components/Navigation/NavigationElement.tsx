@@ -45,7 +45,7 @@ type Props = {
 
 const NavigationElement = ({ title, route }: Props) => {
   const router = useRouter();
-  const isActive = router.pathname === route;
+  const isActive = router.pathname.startsWith(route);
   return (
     <SNavigationElement isActive={isActive}>
       <Link href={route}>

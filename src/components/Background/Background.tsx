@@ -1,12 +1,6 @@
+import SBackground from './Background.styles';
+import Container from '@/app/styled/Container';
 import { ReactNode } from 'react';
-import styled from 'styled-components';
-import Container from '../Container/Container';
-
-const SBackground = styled.section`
-  background-color: ${({ theme }) => theme.backgroundColor};
-  border-radius: ${({ theme }) => theme.appBoxPadding};
-  display: flex;
-`;
 
 type Props = {
   children: ReactNode;

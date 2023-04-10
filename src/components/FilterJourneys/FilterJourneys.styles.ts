@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import TextField from '../TextField/TextField';
 
 export const FormField = styled(TextField)`
@@ -9,7 +9,7 @@ export const NumberField = styled(TextField)`
   width: 80px;
 `;
 
-export const SFilters = styled.div`
+export const SFilters = styled.form`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -62,7 +62,7 @@ export const SSortingSwitch = styled.div`
   flex-direction: row;
 `;
 
-export const SSortingOption = styled.button`
+export const SSortingOption = styled.button<{ isActive: boolean }>`
   box-sizing: border-box;
   padding: 4px 12px;
   border-radius: 20px;
@@ -74,10 +74,56 @@ export const SSortingOption = styled.button`
   margin-right: 8px;
   border: 1px solid ${({ theme }) => theme.secondaryColor};
 
+  ${({ isActive }) =>
+    isActive &&
+    css`
+      border: 1px solid ${({ theme }) => theme.primaryColor};
+    `}
+
   &:hover,
   &:focus {
     outline: none;
-    border-color: ${({ theme }) => theme.primaryColor};
     transform: scale(1.05);
   }
+`;
+
+export const SStationOption = styled.button<{ isActive: boolean }>`
+  box-shadow: none;
+  font-size: 12px;
+  color: ${({ theme }) => theme.blackColor};
+  opacity: 0.6;
+  text-decoration: none;
+  padding-bottom: 4px;
+  border: none;
+  background-color: transparent;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: 0.3s;
+
+  &:not(:last-child) {
+    margin-right: 8px;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:hover,
+  &:focus {
+    outline: none;
+    opacity: 1;
+    color: ${({ theme }) => theme.primaryColor};
+  }
+
+  ${({ isActive }) =>
+    isActive &&
+    css`
+      opacity: 1;
+      border-color: ${({ theme }) => theme.primaryColor};
+    `}
+`;
+
+export const SStationSwitch = styled.div`
+  display: flex;
+  flex-direction: row;
 `;

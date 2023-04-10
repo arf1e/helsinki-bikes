@@ -9,13 +9,21 @@ type SwitchOption = {
 type Props = {
   options: SwitchOption[];
   value?: string;
+  handleChange: (value: string) => void;
 };
 
-const SortingSwitch = ({ options, value }: Props) => {
+const SortingSwitch = ({ options, value, handleChange }: Props) => {
   return (
     <SSortingSwitch>
       {options.map((option) => (
-        <SSortingOption key={option.value}>{option.title}</SSortingOption>
+        <SSortingOption
+          isActive={value === option.value}
+          onClick={() => handleChange(option.value)}
+          type="button"
+          key={option.value}
+        >
+          {option.title}
+        </SSortingOption>
       ))}
     </SSortingSwitch>
   );
