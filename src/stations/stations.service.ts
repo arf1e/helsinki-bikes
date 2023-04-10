@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import {
   DESTINATION_FROM,
@@ -71,7 +67,6 @@ export class StationsService {
       },
       take: 5,
     });
-    console.log('GROUPBY RESULT', topStationsIdsArray);
     /*
       As the 'include' option is not supported by 'groupBy', we need to retrieve station names by querying the database. 
       We can use Promise.all since it maintains the order of promises.

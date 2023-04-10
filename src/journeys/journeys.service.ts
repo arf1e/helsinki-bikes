@@ -83,6 +83,28 @@ export class JourneysService {
   }
 
   /**
+   * This method counts all the journeys that fit under the given filter.
+   * @param query Query object containing current page, filters and sorting options
+   * @returns Promise resolving to a count of journeys
+   */
+  private async countFilteredJourneys(query: JourneyPaginationQueryDto) {
+    const filters = this.constructFiltersByQuery(query);
+    const totalCount = await this.prisma.journey.count(filters);
+    return totalCount;
+  }
+
+  /**
+   * This method gets total pages count for journeys that fit under the given filter.
+   * @param query Query object containing current page, filters and sorting options
+   * @returns Promise resolving to a number of total pages
+   */
+  private async getJourneysTotalPagesCount(query: JourneyPaginationQueryDto) {
+    const journeysCount = await this.countFilteredJourneys(query);
+    const totalPages = Math.ceil(journeysCount / JOURNEYS_PER_PAGE);
+    return totalPages;
+  }
+
+  /**
    * This method queries the database for journeys based on given query options.
    * @param query Query object containing current page, filters and sorting options
    * @returns Promise resolving to an array of journeys
@@ -118,6 +140,7 @@ export class JourneysService {
    */
   async findMany(query: JourneyPaginationQueryDto) {
     const journeys = await this.getJourneysByQuery(query);
-    return journeys;
+    const totalPages = await this.getJourneysTotalPagesCount(query);
+    return { journeys, totalPages };
   }
 }

@@ -10,6 +10,7 @@ describe('JourneysService', () => {
   const mockPrismaService = {
     journey: {
       findMany: jest.fn(),
+      count: jest.fn(),
     },
   };
 
