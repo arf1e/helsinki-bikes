@@ -1,11 +1,11 @@
 import styled, { css } from 'styled-components';
-import TextField from '../TextField/TextField';
+import SInput from '@/app/styled/Input';
 
-export const FormField = styled(TextField)`
+export const FormField = styled(SInput)`
   flex: 1;
 `;
 
-export const NumberField = styled(TextField)`
+export const NumberField = styled(SInput)`
   width: 80px;
 `;
 
@@ -38,6 +38,21 @@ export const SFilters = styled.form`
   .field-title {
     font-size: 14px;
     color: ${({ theme }) => theme.blackColor};
+  }
+
+  .form-controls {
+    transition: 0.3s;
+    display: flex;
+    justify-content: space-between;
+
+    button:first-child {
+      flex: 2;
+    }
+
+    button[type='reset'] {
+      flex: 1;
+      margin-left: 12px;
+    }
   }
 
   .input-line {

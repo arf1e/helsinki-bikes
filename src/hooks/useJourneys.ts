@@ -2,30 +2,11 @@ import { useEffect, useState } from 'react';
 import { TFormValues } from '../components/FilterJourneys/FilterJourneys.utils';
 import client from '../common/api';
 import { JourneysApiResponse } from '../types/journeys';
+import { composeQueryString } from '../common/hooks-utils';
 
 type TUseJourneysInput = {
   filters?: TFormValues;
   page?: number;
-};
-
-/**
- * This function constructs query string from given filtering and pagination values for further use in the useJourneys hook.
- * @param filters - Object containing filtering & sorting form values
- * @param page - Current page number
- * @returns Query string composed from given form values and page number
- */
-const composeJourneysQueryString = (filters: TFormValues, page: number) => {
-  const queryObject = new URLSearchParams();
-  queryObject.set('page', page.toString());
-
-  for (const [key, value] of Object.entries(filters)) {
-    if (Boolean(value) === true) {
-      queryObject.set(key, value);
-    }
-  }
-
-  const queryString = queryObject.toString();
-  return queryString;
 };
 
 /**
@@ -41,7 +22,7 @@ function useJourneys({ filters = {}, page = 1 }: TUseJourneysInput = {}) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const queryString = composeJourneysQueryString(filters, page);
+  const queryString = composeQueryString(filters, page);
 
   useEffect(() => {
     client

@@ -8,6 +8,8 @@ const theme = {
   blackColor: '#212340',
   darkGrayColor: '#575a87',
   appBackgroundColor: '#f0f1ff',
+  errorColor: '#FF626B',
+  successColor: '#62FFD0',
   containerDesktopWidth: '80vw',
   minContainerDesktopWidth: '1120px',
   appBoxPadding: '24px',

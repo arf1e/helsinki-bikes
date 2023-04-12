@@ -1,8 +1,8 @@
 import { Subtitle } from '@/app/styled/Typography';
 import { FormField, NumberField, SFilters } from './FilterJourneys.styles';
 import SortingSwitch from './SortingSwitch';
-import { PrimaryButton } from '@/app/styled/Buttons';
-import { Formik } from 'formik';
+import { PrimaryButton, SecondaryButton } from '@/app/styled/Buttons';
+import { Formik, FormikProps } from 'formik';
 import {
   ORDER_ASCENDING,
   ORDER_DESCENDING,
@@ -18,6 +18,11 @@ type Props = {
 };
 
 const FilterJourneys = ({ applyFilters }: Props) => {
+  const resetForm = (formikProps: FormikProps<TFormValues>) => {
+    formikProps.resetForm();
+    formikProps.submitForm();
+  };
+
   return (
     <Formik
       initialValues={initialJourneysFormValues}
@@ -33,6 +38,8 @@ const FilterJourneys = ({ applyFilters }: Props) => {
             </div>
             <div className="input-line">
               <FormField
+                type="text"
+                isInvalid={!!formikProps.errors.departureStationName}
                 name="departureStationName"
                 onChange={formikProps.handleChange}
                 value={formikProps.values.departureStationName}
@@ -44,7 +51,9 @@ const FilterJourneys = ({ applyFilters }: Props) => {
             </div>
             <div className="input-line">
               <FormField
+                type="text"
                 name="returnStationName"
+                isInvalid={!!formikProps.errors.returnStationName}
                 onChange={formikProps.handleChange}
                 value={formikProps.values.returnStationName}
                 placeholder="Start typing..."
@@ -58,6 +67,8 @@ const FilterJourneys = ({ applyFilters }: Props) => {
             </div>
             <div className="input-line">
               <NumberField
+                type="text"
+                isInvalid={!!formikProps.errors.minDistance}
                 name="minDistance"
                 value={formikProps.values.minDistance}
                 onChange={formikProps.handleChange}
@@ -66,7 +77,9 @@ const FilterJourneys = ({ applyFilters }: Props) => {
 
               <div className="input-line__spacer" />
               <NumberField
+                type="text"
                 placeholder="max"
+                isInvalid={!!formikProps.errors.maxDistance}
                 name="maxDistance"
                 value={formikProps.values.maxDistance}
                 onChange={formikProps.handleChange}
@@ -77,6 +90,8 @@ const FilterJourneys = ({ applyFilters }: Props) => {
             </div>
             <div className="input-line">
               <NumberField
+                isInvalid={!!formikProps.errors.minDuration}
+                type="text"
                 placeholder="min"
                 name="minDuration"
                 value={formikProps.values.minDuration}
@@ -84,7 +99,9 @@ const FilterJourneys = ({ applyFilters }: Props) => {
               />
               <div className="input-line__spacer" />
               <NumberField
+                type="text"
                 placeholder="max"
+                isInvalid={!!formikProps.errors.maxDuration}
                 name="maxDuration"
                 value={formikProps.values.maxDuration}
                 onChange={formikProps.handleChange}
@@ -120,7 +137,14 @@ const FilterJourneys = ({ applyFilters }: Props) => {
               />
             </div>
           </fieldset>
-          <PrimaryButton type="submit">Apply</PrimaryButton>
+          <div className="form-controls">
+            <PrimaryButton type="submit">Apply</PrimaryButton>
+            {formikProps.dirty && (
+              <SecondaryButton type="reset" onClick={() => resetForm(formikProps)}>
+                Reset
+              </SecondaryButton>
+            )}
+          </div>
         </SFilters>
       )}
     </Formik>
