@@ -8,8 +8,8 @@ type Props = {
 const StationCardContainer = styled(Link)`
   padding: 16px;
   width: 200px;
-  height: 80px;
-  margin-bottom: 20px;
+  min-height: 80px;
+  margin-bottom: 18px;
   border: 1px solid ${({ theme }) => theme.secondaryColor};
   display: flex;
   justify-content: flex-start;
@@ -20,8 +20,15 @@ const StationCardContainer = styled(Link)`
   text-decoration: none;
   border-radius: 4px;
 
+  :not(:nth-child(5n)) {
+    margin-right: 18px;
+  }
   .station-name {
     font-size: 14px;
+    width: 200px;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
     color: ${({ theme }) => theme.blackColor};
     margin-bottom: 8px;
   }

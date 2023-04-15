@@ -4,7 +4,7 @@ export type StationShort = {
   address: string;
 };
 
-type StationCounted = {
+export type StationCounted = {
   id: number;
   count: number;
   name: string;
@@ -27,6 +27,11 @@ export type StationSingle = {
     fromHere: StationCounted[];
     toHere: StationCounted[];
   };
+};
+
+export type StationApiError = {
+  code: string;
+  message: string;
 };
 
 export type StationsApiResponse = {
