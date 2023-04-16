@@ -12,6 +12,7 @@ describe('StationsService', () => {
     station: {
       findUnique: jest.fn(),
       findMany: jest.fn(),
+      count: jest.fn(),
     },
     journey: {
       count: jest.fn(),

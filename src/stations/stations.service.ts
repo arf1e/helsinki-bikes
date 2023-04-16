@@ -7,6 +7,7 @@ import {
   STATIONS_PER_PAGE,
 } from './stations.constants';
 import { StationPaginationQueryDto } from 'src/common/dto/station-pagination-query.dto';
+import { CreateStationDto } from 'src/common/dto/create-station.dto';
 
 @Injectable()
 export class StationsService {
@@ -123,6 +124,57 @@ export class StationsService {
   }
 
   /**
+   * This method counts all the stations that fit under the given filter.
+   * @param query Query object containing current page and filtering options
+   * @returns Promise resolving to a count of stations
+   */
+  private async countFilteredStations(query: StationPaginationQueryDto) {
+    const filters = this.constructFiltersByQuery(query);
+    const totalCount = await this.prisma.station.count(filters);
+    return totalCount;
+  }
+
+  /**
+   * This method gets total pages count for stations that fit under the given filter.
+   * @param query Query object containing current page and filtering options
+   * @returns Promise resolving to a number of total pages
+   */
+  private async getStationsTotalPagesCount(query: StationPaginationQueryDto) {
+    const stationsCount = await this.countFilteredStations(query);
+    const totalPages = Math.ceil(stationsCount / STATIONS_PER_PAGE);
+    return totalPages;
+  }
+
+  /**
+   * This method queries the database for stations based on given query options.
+   * @param query Query object containing current page and filtering options
+   * @returns Promise resolving to an array of stations
+   */
+  private async getStationsByQuery(query: StationPaginationQueryDto) {
+    const filters = this.constructFiltersByQuery(query);
+    const pagination = this.constructPaginationByQuery(query);
+
+    return this.prisma.station.findMany({
+      ...filters,
+      ...pagination,
+      select: {
+        id: true,
+        name: true,
+        address: true,
+      },
+    });
+  }
+
+  /**
+   * This method creates a new station in the database
+   * @param data Object containing new station data
+   * @returns Promise resolving to a new station object
+   */
+  private async createNewStation(data: CreateStationDto) {
+    return this.prisma.station.create({ data });
+  }
+
+  /**
    * Interface method to access the database for one station by its id.
    * @param id Station id
    * @returns Station data, including most popular stations and journeys count. If the station with given id does not exists, throws NotFoundException.
@@ -147,14 +199,16 @@ export class StationsService {
     const topFiveStationsToHere = await this.getTopStations(DESTINATION_TO, id);
 
     return {
-      station,
-      journeysCount: {
-        fromHere: journeysFromThisStationCount,
-        toHere: journeysToThisStationCount,
-      },
-      topStations: {
-        fromHere: topFiveStationsFromHere,
-        toHere: topFiveStationsToHere,
+      station: {
+        ...station,
+        journeysCount: {
+          fromHere: journeysFromThisStationCount,
+          toHere: journeysToThisStationCount,
+        },
+        topStations: {
+          fromHere: topFiveStationsFromHere,
+          toHere: topFiveStationsToHere,
+        },
       },
     };
   }
@@ -165,17 +219,18 @@ export class StationsService {
    * @returns Promise resolving to an array of stations
    */
   async findMany(query: StationPaginationQueryDto) {
-    const filters = this.constructFiltersByQuery(query);
-    const pagination = this.constructPaginationByQuery(query);
+    const stations = await this.getStationsByQuery(query);
+    const totalPages = await this.getStationsTotalPagesCount(query);
 
-    return this.prisma.station.findMany({
-      ...filters,
-      ...pagination,
-      select: {
-        id: true,
-        name: true,
-        address: true,
-      },
-    });
+    return { stations, totalPages };
+  }
+
+  /**
+   * Interface method to create a new station
+   * @param data Object containing station data
+   * @returns Promise resolving to a new station object
+   */
+  async createOne(data: CreateStationDto) {
+    return this.createNewStation(data);
   }
 }

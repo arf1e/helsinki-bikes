@@ -6,6 +6,7 @@ import {
   JOURNEYS_CSV_HEADERS,
   STATIONS_CSV_HEADERS,
   getJourneyValidationSchema,
+  resetStationsIdCounter,
   stationSchema,
 } from '../utils/seeding';
 const prisma = new PrismaClient();
@@ -66,11 +67,26 @@ const seedStations = async () => {
 };
 
 /**
+ * This function loads
+ */
+const loadJourneysToTheDatabase = async (queue) => {
+  console.log(`Inserting ${queue.length} journeys to the database...`);
+  return prisma.journey.createMany({
+    data: queue,
+    skipDuplicates: true,
+  });
+};
+
+/**
  * This function will seed the database with journeys data.
  */
-const seedJourneys = async (stationIds: number[], filename: string) => {
+const seedJourneys = async (
+  stationIds: number[],
+  filename: string,
+  queueSize = 1000,
+) => {
   const journeysPath = path.resolve(__dirname, '__fixtures__', filename);
-  const journeysToInsert = [];
+  let journeysQueue = [];
   const journeysSchema = getJourneyValidationSchema(stationIds);
   const journeysHandler = async (journeyInput) => {
     let castedJourney;
@@ -79,26 +95,41 @@ const seedJourneys = async (stationIds: number[], filename: string) => {
         stripUnknown: true,
       });
     } catch (e) {
-      console.log(`Failed to process journey: ${JSON.stringify(journeyInput)}`);
+      console.log(
+        `Failed to validate journey: ${JSON.stringify(journeyInput)}`,
+      );
     }
     const shouldAddJourney = await journeysSchema.isValid(castedJourney);
     if (shouldAddJourney) {
-      journeysToInsert.push({
+      journeysQueue.push({
         ...castedJourney,
         distance: Number.isInteger(castedJourney.distance)
           ? castedJourney.distance
           : Math.floor(castedJourney.distance),
       });
+      if (journeysQueue.length === queueSize) {
+        await loadJourneysToTheDatabase(journeysQueue)
+          .then(() => {
+            journeysQueue = [];
+          })
+          .catch((e) => console.log(e));
+      }
     }
   };
 
-  await handleCsvImport(journeysPath, journeysHandler, JOURNEYS_CSV_HEADERS);
-  await prisma.journey
-    .createMany({
-      data: journeysToInsert,
-      skipDuplicates: true,
+  await handleCsvImport(journeysPath, journeysHandler, JOURNEYS_CSV_HEADERS)
+    .then(() => {
+      console.log(
+        'FINISH CSV IMPORT, CURRENT QUEUE LENGTH:',
+        journeysQueue.length,
+      );
+      return journeysQueue.length > 0
+        ? loadJourneysToTheDatabase(journeysQueue)
+        : null;
     })
-    .catch((e) => console.log(e));
+    .then(() => {
+      journeysQueue = [];
+    });
 };
 
 /**
@@ -106,18 +137,16 @@ const seedJourneys = async (stationIds: number[], filename: string) => {
  * All the seeding functions should be called here.
  */
 const main = async () => {
-  console.time('Seeding');
   await seedStations();
   const stations = await prisma.station.findMany({ select: { id: true } });
   const stationIds = stations.map((station) => station.id);
-
-  await Promise.all([
-    seedJourneys(stationIds, 'journeys-may.csv'),
-    seedJourneys(stationIds, 'journeys-june.csv'),
-    seedJourneys(stationIds, 'journeys-july.csv'),
-  ]).then(() => console.timeEnd('Seeding'));
+  await seedJourneys(stationIds, 'journeys-may.csv')
+    .then(() => seedJourneys(stationIds, 'journeys-june.csv'))
+    .then(() => seedJourneys(stationIds, 'journeys-july.csv'))
+    .then(() => console.timeEnd('Seeding'));
 };
 
 main().finally(async () => {
+  await resetStationsIdCounter(prisma);
   await prisma.$disconnect();
 });
