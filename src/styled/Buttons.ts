@@ -15,7 +15,12 @@ export const PrimaryButton = styled.button`
   cursor: pointer;
   transition: 0.3s;
 
-  &:hover {
+  &:disabled {
+    background-color: ${({ theme }) => theme.grayColor};
+    cursor: default;
+  }
+
+  &:not(&:disabled):hover {
     background-color: ${({ theme }) => theme.darkGrayColor};
   }
 

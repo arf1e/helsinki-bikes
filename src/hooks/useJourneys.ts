@@ -25,6 +25,7 @@ function useJourneys({ filters = {}, page = 1 }: TUseJourneysInput = {}) {
   const queryString = composeQueryString(filters, page);
 
   useEffect(() => {
+    setLoading(true);
     client
       .get(`journeys?${queryString}`)
       .then(({ data }: { data: JourneysApiResponse }) => {

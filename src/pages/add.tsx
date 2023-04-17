@@ -1,5 +1,7 @@
+import AddEntity from '../components/AddEntity/AddEntity';
+
 const Add = () => {
-  return <h1>Add</h1>;
+  return <AddEntity />;
 };
 
 export default Add;

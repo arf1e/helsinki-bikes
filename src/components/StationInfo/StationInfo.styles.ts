@@ -59,8 +59,8 @@ export const StationJourneysContainer = styled.div`
     }
 
     &__number {
-      font-size: 48px;
-      line-height: 48px;
+      font-size: 36px;
+      line-height: 36px;
       font-weight: 500;
       color: ${({ theme }) => theme.blackColor};
       margin-right: 8px;

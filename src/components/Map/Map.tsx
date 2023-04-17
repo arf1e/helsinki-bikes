@@ -11,7 +11,6 @@ const HELSINKI_COORDINATES = {
 
 const MapContainer = styled.div`
   flex: 1;
-  position: relative;
 
   .map-bounds {
     height: 100%;
@@ -39,12 +38,13 @@ const Marker = ({ lat: _, lng: __, text }: MarkerProps) => <div className="marke
 
 type Props = {
   points?: Coordinates[];
+  initialCenter?: Coordinates;
 };
 
-const Map = ({ points }: Props) => {
+const Map = ({ points = [], initialCenter }: Props) => {
   const centerCoords = {
-    lat: points && points[0].y ? parseFloat(points[0].y) : HELSINKI_COORDINATES.lat,
-    lng: points && points[0].x ? parseFloat(points[0].x) : HELSINKI_COORDINATES.lng,
+    lat: initialCenter?.y ? parseFloat(initialCenter.y) : HELSINKI_COORDINATES.lat,
+    lng: initialCenter?.x ? parseFloat(initialCenter.x) : HELSINKI_COORDINATES.lng,
   };
   return (
     <MapContainer>
@@ -56,12 +56,12 @@ const Map = ({ points }: Props) => {
             noClear: false,
             disableDefaultUI: true,
             maxZoom: 20,
-            minZoom: 12,
+            minZoom: 1,
           }}
           //@ts-ignore
           bootstrapURLKeys={{ key: process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY }}
           defaultCenter={centerCoords}
-          defaultZoom={15}
+          defaultZoom={12}
         >
           {points &&
             points.map((element, i) => (

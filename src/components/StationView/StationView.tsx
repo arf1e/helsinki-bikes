@@ -12,7 +12,6 @@ const StationViewContainer = styled.div`
   flex: 1;
   flex-direction: row;
   justify-content: space-between;
-  min-height: 750px;
 `;
 
 const StationView = ({ station }: Props) => {
@@ -20,7 +19,7 @@ const StationView = ({ station }: Props) => {
   return (
     <StationViewContainer>
       <StationInfo station={station} />
-      <Map points={[{ x, y }]} />
+      <Map points={[{ x, y }]} initialCenter={{ x, y }} />
     </StationViewContainer>
   );
 };

@@ -20,6 +20,7 @@ function useStations({ filters = {}, page = 1 }: TUseStationsInput) {
   const queryString = composeQueryString(filters, page);
 
   useEffect(() => {
+    setLoading(true);
     client
       .get(`stations?${queryString}`)
       .then(({ data }: { data: StationsApiResponse }) => {

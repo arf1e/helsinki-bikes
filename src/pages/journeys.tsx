@@ -9,7 +9,7 @@ import useFilters from '../hooks/useFilters';
 
 export default function Journeys() {
   const { filters, applyFilters, page, setPage } = useFilters<TFormValues>(initialJourneysFormValues);
-  const { journeys, totalPages } = useJourneys({ filters, page });
+  const { journeys, totalPages, loading } = useJourneys({ filters, page });
 
   const pagination: PaginationProps = {
     currentPage: page,
@@ -21,7 +21,7 @@ export default function Journeys() {
     <>
       <PageHead title="Journeys" />
       <JourneysPageContainer>
-        <FilterJourneys applyFilters={applyFilters} />
+        <FilterJourneys applyFilters={applyFilters} loading={loading} />
         <JourneysList journeys={journeys} pagination={pagination} />
       </JourneysPageContainer>
     </>

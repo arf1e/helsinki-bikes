@@ -12,17 +12,33 @@ import {
   initialJourneysFormValues,
   journeysFilterSchema,
 } from './FilterJourneys.utils';
+import { formToJSON } from 'axios';
 
 type Props = {
   applyFilters: (filters: TFormValues) => void;
+  loading: boolean;
 };
 
-const FilterJourneys = ({ applyFilters }: Props) => {
+const FilterJourneys = ({ applyFilters, loading }: Props) => {
   const resetForm = (formikProps: FormikProps<TFormValues>) => {
     formikProps.resetForm();
     formikProps.submitForm();
   };
 
+  const handleSortingChange = (formikProps: FormikProps<TFormValues>, value: string) => {
+    formikProps.setFieldValue('sortBy', value);
+    if (!formikProps.values.sortOrder) {
+      formikProps.setFieldValue('sortOrder', ORDER_ASCENDING);
+      return;
+    }
+  };
+
+  const handleOrderChange = (formikProps: FormikProps<TFormValues>, value: string) => {
+    if (!formikProps.values.sortBy) {
+      formikProps.setFieldValue('sortBy', SORT_BY_DISTANCE);
+    }
+    formikProps.setFieldValue('sortOrder', value);
+  };
   return (
     <Formik
       initialValues={initialJourneysFormValues}
@@ -116,7 +132,7 @@ const FilterJourneys = ({ applyFilters }: Props) => {
             <div className="input-line">
               <SortingSwitch
                 value={formikProps.values.sortBy}
-                handleChange={formikProps.handleChange('sortBy')}
+                handleChange={(value) => handleSortingChange(formikProps, value)}
                 options={[
                   { title: 'Distance', value: SORT_BY_DISTANCE },
                   { title: 'Duration', value: SORT_BY_DURATION },
@@ -129,7 +145,7 @@ const FilterJourneys = ({ applyFilters }: Props) => {
             <div className="input-line">
               <SortingSwitch
                 value={formikProps.values.sortOrder}
-                handleChange={formikProps.handleChange('sortOrder')}
+                handleChange={(value) => handleOrderChange(formikProps, value)}
                 options={[
                   { title: 'Asc', value: ORDER_ASCENDING },
                   { title: 'Desc', value: ORDER_DESCENDING },
@@ -137,8 +153,11 @@ const FilterJourneys = ({ applyFilters }: Props) => {
               />
             </div>
           </fieldset>
+          <div>{JSON.stringify(loading)}</div>
           <div className="form-controls">
-            <PrimaryButton type="submit">Apply</PrimaryButton>
+            <PrimaryButton type="submit" disabled={loading || !formikProps.isValid}>
+              Apply
+            </PrimaryButton>
             {formikProps.dirty && (
               <SecondaryButton type="reset" onClick={() => resetForm(formikProps)}>
                 Reset

@@ -95,8 +95,7 @@ export const SSortingOption = styled.button<{ isActive: boolean }>`
       border: 1px solid ${({ theme }) => theme.primaryColor};
     `}
 
-  &:hover,
-  &:focus {
+  &:hover {
     outline: none;
     transform: scale(1.05);
   }
@@ -123,8 +122,7 @@ export const SStationOption = styled.button<{ isActive: boolean }>`
     transform: scale(0.98);
   }
 
-  &:hover,
-  &:focus {
+  &:hover {
     outline: none;
     opacity: 1;
     color: ${({ theme }) => theme.primaryColor};
