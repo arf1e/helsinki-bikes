@@ -4,13 +4,14 @@ import { PaginationButton, PaginationContainer } from './Pagination.styles';
 
 type Props = {
   pagination: PaginationProps;
+  disabled?: boolean;
 };
 
-const Pagination = ({ pagination }: Props) => {
+const Pagination = ({ pagination, disabled }: Props) => {
   const { currentPage, setPage, totalPages } = pagination;
 
-  const previousDisabled = useMemo(() => currentPage < 2, [currentPage]);
-  const nextDisabled = useMemo(() => currentPage >= totalPages, [currentPage, totalPages]);
+  const previousDisabled = useMemo(() => currentPage < 2 || disabled, [currentPage, disabled]);
+  const nextDisabled = useMemo(() => currentPage >= totalPages || disabled, [currentPage, totalPages, disabled]);
 
   const handlePreviousPage = useCallback(() => {
     setPage(currentPage - 1);

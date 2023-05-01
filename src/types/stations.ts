@@ -38,3 +38,13 @@ export type StationsApiResponse = {
   stations: StationShort[];
   totalPages: number;
 };
+
+export type StationSuggestion = {
+  id: number;
+  name: string;
+  address: string;
+  x: string;
+  y: string;
+};
+
+export type StationsSuggestionsApiResponse = StationSuggestion[];

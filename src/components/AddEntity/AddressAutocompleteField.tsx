@@ -13,21 +13,21 @@ const getGoogleAutocompleteSuggestions = debounce(async (input = '', handler: (s
 }, 200);
 
 type Props = {
-  textInput: string;
-  setTextInput: (value: string) => void;
+  value: string;
+  setValue: (value: string) => void;
   onChooseOption: (option: GooglePlace) => void;
 };
 
-const AddressAutocompleteField = ({ onChooseOption, textInput, setTextInput }: Props) => {
+const AddressAutocompleteField = ({ onChooseOption, value, setValue }: Props) => {
   const [placesSuggestions, setPlacesSuggestions] = useState<GooglePlace[]>([]);
 
   const handleInput = async (input: string) => {
-    setTextInput(input);
+    setValue(input);
     await getGoogleAutocompleteSuggestions(input, setPlacesSuggestions);
   };
 
   const handleChooseOption = (option: GooglePlace) => {
-    setTextInput(option.main_text);
+    setValue(option.main_text);
     onChooseOption(option);
     setPlacesSuggestions([]);
   };
@@ -36,9 +36,9 @@ const AddressAutocompleteField = ({ onChooseOption, textInput, setTextInput }: P
     <div className="field field--autocomplete">
       <FormTextField
         title="Address"
-        value={textInput}
+        value={value}
         onChange={(e) => handleInput(e.target.value)}
-        placeholder="Start typing..."
+        placeholder="Start typing and choose an option"
       />
       {placesSuggestions && (
         <div className="suggestions">

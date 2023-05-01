@@ -33,8 +33,9 @@ type Props = {
 const FormTextField = ({ value, title, onChange, error, placeholder, handleBlur }: Props) => {
   return (
     <SFormField>
-      <label>{title}</label>
+      <label htmlFor={title}>{title}</label>
       <SInput
+        id={title}
         type="text"
         value={value}
         placeholder={placeholder}

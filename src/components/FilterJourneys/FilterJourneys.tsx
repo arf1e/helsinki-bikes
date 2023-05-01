@@ -59,7 +59,7 @@ const FilterJourneys = ({ applyFilters, loading }: Props) => {
                 name="departureStationName"
                 onChange={formikProps.handleChange}
                 value={formikProps.values.departureStationName}
-                placeholder="Start typing..."
+                placeholder="Departure station name"
               />
             </div>
             <div className="field-header">
@@ -72,7 +72,7 @@ const FilterJourneys = ({ applyFilters, loading }: Props) => {
                 isInvalid={!!formikProps.errors.returnStationName}
                 onChange={formikProps.handleChange}
                 value={formikProps.values.returnStationName}
-                placeholder="Start typing..."
+                placeholder="Return station name"
               />
             </div>
           </fieldset>
@@ -153,13 +153,12 @@ const FilterJourneys = ({ applyFilters, loading }: Props) => {
               />
             </div>
           </fieldset>
-          <div>{JSON.stringify(loading)}</div>
           <div className="form-controls">
             <PrimaryButton type="submit" disabled={loading || !formikProps.isValid}>
               Apply
             </PrimaryButton>
             {formikProps.dirty && (
-              <SecondaryButton type="reset" onClick={() => resetForm(formikProps)}>
+              <SecondaryButton type="reset" disabled={loading} onClick={() => resetForm(formikProps)}>
                 Reset
               </SecondaryButton>
             )}

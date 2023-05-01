@@ -5,7 +5,7 @@ type Props = {
 };
 
 const PageHead = ({ title }: Props) => {
-  const pageTitle = title ? `${title} | Bike App` : 'Bike App';
+  const pageTitle = title ? `${title} | Helsinki Bikes` : 'Helsinki Bikes';
   return (
     <Head>
       <title>{pageTitle}</title>

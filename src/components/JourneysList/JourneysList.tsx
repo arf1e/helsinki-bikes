@@ -3,19 +3,19 @@ import JourneysTable from '../JourneysTable/JourneysTable';
 import { Journey } from '@/app/types/journeys';
 import { PaginationProps } from '@/app/types/pagination';
 import { SList } from './JourneysList.styles';
-import { useEffect } from 'react';
 
 type Props = {
   journeys: Journey[];
   pagination: PaginationProps;
+  loading: boolean;
 };
 
-const JourneysList = ({ journeys, pagination }: Props) => {
+const JourneysList = ({ journeys, pagination, loading }: Props) => {
   return (
     <SList>
       <JourneysTable journeys={journeys} />
       <div className="pagination-container">
-        <Pagination pagination={pagination} />
+        <Pagination pagination={pagination} disabled={loading} />
       </div>
     </SList>
   );

@@ -7,7 +7,7 @@ export const AddStationContainer = styled.div`
   align-items: space-between;
 `;
 
-export const AddStationForm = styled.form`
+export const AddEntityForm = styled.form`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -37,13 +37,40 @@ export const AddStationForm = styled.form`
   .field {
     width: 240px;
     margin-bottom: 16px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    label {
+      font-size: 14px;
+      color: ${({ theme }) => theme.darkGrayColor};
+    }
+
     input {
+      flex: 1;
       width: 100%;
+    }
+
+    .field-error {
+      font-size: 12px;
+      margin-top: 4px;
+      color: ${({ theme }) => theme.errorColor};
     }
   }
 
   .field--capacity {
     width: 80px;
+  }
+
+  .containing-label {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    justify-content: flex-start;
+
+    .label-text {
+      margin-bottom: 8px;
+    }
   }
 
   .field--autocomplete {
@@ -94,4 +121,11 @@ export const AddStationForm = styled.form`
       }
     }
   }
+`;
+
+export const AddJourneyContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: space-between;
 `;

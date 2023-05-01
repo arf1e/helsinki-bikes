@@ -34,9 +34,15 @@ export const SecondaryButton = styled(PrimaryButton)`
   border: 1px solid ${({ theme }) => theme.primaryColor};
   color: ${({ theme }) => theme.primaryColor};
 
-  &:hover {
+  &:not(&:disabled):hover {
     background-color: ${({ theme }) => theme.backgroundColor};
     color: ${({ theme }) => theme.darkGrayColor};
     border-color: ${({ theme }) => theme.darkGrayColor};
+  }
+
+  &:disabled {
+    color: ${({ theme }) => theme.grayColor};
+    border-color: ${({ theme }) => theme.grayColor};
+    background-color: ${({ theme }) => theme.backgroundColor};
   }
 `;

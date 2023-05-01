@@ -37,6 +37,32 @@ export const StationHeaderContainer = styled.header`
   }
 `;
 
+export const StationCapacityContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 32px;
+
+  .capacity-counter {
+    display: flex;
+    flex-direction: row;
+    margin-top: 12px;
+    align-items: flex-end;
+
+    .capacity-number {
+      font-size: 36px;
+      line-height: 36px;
+      font-weight: 500;
+      color: ${({ theme }) => theme.blackColor};
+      margin-right: 8px;
+    }
+    .capacity-description {
+      font-size: 14px;
+      color: ${({ theme }) => theme.darkGrayColor};
+    }
+  }
+`;
+
 export const StationJourneysContainer = styled.div`
   display: flex;
   flex-direction: column;

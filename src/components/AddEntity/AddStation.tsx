@@ -2,18 +2,22 @@ import Map from '../Map';
 import { Title } from '@/app/styled/Typography';
 import { Formik, FormikProps } from 'formik';
 import FormTextField from '../FomField/FormFIeld';
-import { TAddStationForm, addStationInitialValues, stationValidationSchema } from './AddEntity.utils';
+import { addStationInitialValues, stationValidationSchema } from './AddEntity.utils';
 import { useState } from 'react';
 import { GooglePlace } from '@/app/types/google';
 import client from '@/app/common/api';
 import { Coordinates } from '@/app/types/maps';
 import PageHead from '../PageHead/PageHead';
 import AddressAutocompleteField from './AddressAutocompleteField';
-import { AddStationContainer, AddStationForm } from './AddEntity.styles';
+import { AddEntityForm, AddStationContainer } from './AddEntity.styles';
 import { PrimaryButton, SecondaryButton } from '@/app/styled/Buttons';
+import { FORM_STATE, FORM_STATE_ERROR, FORM_STATE_IDLE, FORM_STATE_LOADING, TAddStationForm } from './AddEntity.types';
+import useStatusBar from '@/app/hooks/useStatusBar';
 
 const AddStation = () => {
   const [points, setPoints] = useState<Coordinates[]>([]);
+  const [formState, setFormState] = useState<FORM_STATE>(FORM_STATE_IDLE);
+  const { notify } = useStatusBar();
 
   const chooseAutoCompleteOption = async (option: GooglePlace, formikProps: FormikProps<TAddStationForm>) => {
     formikProps.setFieldValue('address', option.main_text);
@@ -29,14 +33,23 @@ const AddStation = () => {
   };
 
   const handleFormSubmit = async (values: TAddStationForm, resetForm: () => void) => {
-    const response = await client.post('/stations/add', values, {
-      headers: { 'Content-Type': 'application/json' },
-    });
-    if (response.status === 201) {
-      alert('Success!');
-      resetForm();
-      setPoints([]);
-    }
+    setFormState(FORM_STATE_LOADING);
+    notify({ status: 'loading', message: 'Creating station...' });
+    await client
+      .post('/stations/add', values)
+      .then((response) => {
+        if (response.status === 201) {
+          notify({ status: 'success', message: 'New station has been successfully created!' });
+          setFormState(FORM_STATE_IDLE);
+          resetForm();
+          setPoints([]);
+        }
+      })
+      .catch((error) => {
+        const message = error.response?.data?.message || 'Failed to reach the server to create a new station.';
+        notify({ status: 'error', message });
+        setFormState(FORM_STATE_ERROR);
+      });
   };
 
   return (
@@ -50,15 +63,22 @@ const AddStation = () => {
         validateOnBlur={true}
       >
         {(formikProps) => (
-          <AddStationForm onSubmit={formikProps.handleSubmit}>
+          <AddEntityForm onSubmit={formikProps.handleSubmit} aria-disabled={formState === FORM_STATE_LOADING}>
             <Title className="form-title">New Station</Title>
             <div className="field">
-              <FormTextField title="Name" value={formikProps.values.name} onChange={formikProps.handleChange('name')} />
+              <FormTextField
+                title="Name"
+                value={formikProps.values.name}
+                onChange={formikProps.handleChange('name')}
+                placeholder="Station name"
+                handleBlur={formikProps.handleBlur('name')}
+                error={formikProps.touched.name ? formikProps.errors.name : ''}
+              />
             </div>
             <AddressAutocompleteField
               onChooseOption={(option) => chooseAutoCompleteOption(option, formikProps)}
-              textInput={formikProps.values.address}
-              setTextInput={formikProps.handleChange('address')}
+              value={formikProps.values.address}
+              setValue={formikProps.handleChange('address')}
             />
             <div className="field field--capacity">
               <FormTextField
@@ -67,6 +87,7 @@ const AddStation = () => {
                 onChange={formikProps.handleChange('capacity')}
                 error={formikProps.touched.capacity ? formikProps.errors.capacity : ''}
                 handleBlur={formikProps.handleBlur('capacity')}
+                placeholder="Number"
               />
             </div>
             <div className="field field--city">
@@ -76,6 +97,7 @@ const AddStation = () => {
                 onChange={formikProps.handleChange('city')}
                 error={formikProps.touched.city ? formikProps.errors.city : ''}
                 handleBlur={formikProps.handleBlur('city')}
+                placeholder="i.e. Espoo"
               />
             </div>
             <div className="field field--operator">
@@ -85,6 +107,7 @@ const AddStation = () => {
                 onChange={formikProps.handleChange('operator')}
                 error={formikProps.touched.operator ? formikProps.errors.operator : ''}
                 handleBlur={formikProps.handleBlur('operator')}
+                placeholder="i.e. City Bike Finland"
               />
             </div>
             <div className="form-controls">
@@ -95,7 +118,7 @@ const AddStation = () => {
                 </SecondaryButton>
               )}
             </div>
-          </AddStationForm>
+          </AddEntityForm>
         )}
       </Formik>
       <Map points={points} />
