@@ -1,46 +1,9 @@
-import { Title } from '@/app/styled/Typography';
-import styled from 'styled-components';
 import GoogleMapReact from 'google-maps-react-markers';
-import mapStyles from './mapStyles';
+import googleMapStyles from './googleMapStyles';
 import { Coordinates } from '@/app/types/maps';
-import { useEffect, useRef } from 'react';
-
-const HELSINKI_COORDINATES = {
-  lat: 60.16897334465249,
-  lng: 24.93799598347666,
-};
-
-const MapContainer = styled.div`
-  flex: 1;
-
-  .map-bounds {
-    height: 100%;
-    width: 100%;
-    background-color: ${({ theme }) => theme.grayColor};
-  }
-`;
-
-const SMarker = styled.div<{ hidden?: boolean }>`
-  width: 40px;
-  height: 40px;
-  content: none;
-  border-radius: 50%;
-  background: ${({ theme }) => theme.primaryColor};
-  transform: translate(-50%, -50%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: ${({ theme }) => theme.backgroundColor};
-  font-size: 16px;
-`;
-
-type MarkerProps = {
-  lat: number;
-  lng: number;
-  text?: string;
-};
-
-const Marker = ({ lat: _, lng: __, text }: MarkerProps) => <SMarker onClick={() => null}>{text}</SMarker>;
+import { MapContainer } from './Map.styles';
+import Marker from './Marker';
+import { HELSINKI_COORDINATES } from './Map.constants';
 
 interface MapPoint extends Coordinates {
   text?: string;
@@ -63,7 +26,7 @@ const Map = ({ points = [], initialCenter }: Props) => {
       <div className="map-bounds">
         <GoogleMapReact
           options={{
-            styles: mapStyles,
+            styles: googleMapStyles,
             fullscreenControl: false,
             noClear: false,
             disableDefaultUI: true,

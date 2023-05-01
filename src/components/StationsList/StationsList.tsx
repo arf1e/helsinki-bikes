@@ -1,17 +1,6 @@
 import { StationShort } from '@/app/types/stations';
-import styled from 'styled-components';
 import StationCard from '../StationCard';
-
-const StationsListContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  align-items: center;
-  align-content: flex-start;
-  min-height: 50vh;
-  padding: ${({ theme }) => theme.appBoxPadding};
-`;
+import StationsListContainer from './StationsList.styles';
 
 type Props = {
   stations: StationShort[];

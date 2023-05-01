@@ -1,4 +1,3 @@
-import styled from 'styled-components';
 import { SSortingOption, SSortingSwitch } from './FilterJourneys.styles';
 
 type SwitchOption = {

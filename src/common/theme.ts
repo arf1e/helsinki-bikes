@@ -13,6 +13,7 @@ const theme = {
   containerDesktopWidth: '80vw',
   minContainerDesktopWidth: '1120px',
   appBoxPadding: '24px',
+  minContainerHeight: '50vh',
 };
 
 export const GlobalStyle = createGlobalStyle`

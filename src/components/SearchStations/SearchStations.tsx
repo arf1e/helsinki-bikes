@@ -1,16 +1,9 @@
 import { Formik } from 'formik';
-import styled from 'styled-components';
 import { TSearchStations, initialSearchStationsValues, searchStationsSchema } from './SearchStations.utils';
 import SInput from '@/app/styled/Input';
 import SearchIcon from '@/app/assets/svg/search.svg';
 import { PrimaryButton } from '@/app/styled/Buttons';
-
-const SearchForm = styled.form`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-`;
+import SearchForm from './SearchStations.styles';
 
 type Props = {
   applyFilters: (filters: TSearchStations) => void;

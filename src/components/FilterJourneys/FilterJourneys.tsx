@@ -12,7 +12,6 @@ import {
   initialJourneysFormValues,
   journeysFilterSchema,
 } from './FilterJourneys.utils';
-import { formToJSON } from 'axios';
 
 type Props = {
   applyFilters: (filters: TFormValues) => void;

@@ -5,7 +5,7 @@ import EntitySwitch from './EntitySwitch';
 import EntityForm from './EntityForm';
 
 const AddEntityContainer = styled.section`
-  min-height: 60vh;
+  min-height: ${({ theme }) => theme.minContainerHeight};
   flex: 1;
   display: flex;
   flex-direction: row;

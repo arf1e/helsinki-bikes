@@ -1,7 +1,7 @@
 import Map from '../Map';
 import { Title } from '@/app/styled/Typography';
 import { Formik, FormikProps } from 'formik';
-import FormTextField from '../FomField/FormFIeld';
+import FormTextField from '../FormField';
 import { addStationInitialValues, stationValidationSchema } from './AddEntity.utils';
 import { useState } from 'react';
 import { GooglePlace } from '@/app/types/google';

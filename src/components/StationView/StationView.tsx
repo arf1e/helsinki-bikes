@@ -1,18 +1,11 @@
 import { StationSingle } from '@/app/types/stations';
-import styled from 'styled-components';
 import StationInfo from '../StationInfo';
 import Map from '../Map';
+import StationViewContainer from './StationView.styles';
 
 type Props = {
   station: StationSingle;
 };
-
-const StationViewContainer = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: row;
-  justify-content: space-between;
-`;
 
 const StationView = ({ station }: Props) => {
   const { x, y } = station;

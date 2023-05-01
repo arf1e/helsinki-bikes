@@ -2,15 +2,26 @@ import client from '@/app/common/api';
 import { StationSuggestion, StationsSuggestionsApiResponse } from '@/app/types/stations';
 import debounce from 'lodash.debounce';
 import { useState } from 'react';
-import FormTextField from '../FomField/FormFIeld';
+import FormTextField from '../FormField';
+import { AxiosError } from 'axios';
 
-const getStationsSuggestions = debounce(async (name = '', handler: (suggestions: StationSuggestion[]) => void) => {
-  const apiResponse = await client.get<any, { data: StationsSuggestionsApiResponse }>('/lookup/stations', {
-    params: { name },
-  });
-  const suggesstions = apiResponse.data;
-  handler(suggesstions);
-}, 200);
+const getStationsSuggestions = debounce(
+  async (
+    name = '',
+    dataHandler: (suggestions: StationSuggestion[]) => void,
+    handleError: (error: AxiosError) => void,
+  ) => {
+    return client
+      .get<any, { data: StationsSuggestionsApiResponse }>('/lookup/stations', {
+        params: { name },
+      })
+      .then(({ data }: { data: StationSuggestion[] }) => {
+        dataHandler(data);
+      })
+      .catch(handleError);
+  },
+  200,
+);
 
 type Props = {
   value: string;
@@ -32,10 +43,15 @@ const StationsAutocompleteField = ({
   onBlur,
 }: Props) => {
   const [suggestions, setSuggestions] = useState<StationSuggestion[]>([]);
+  const [autocompleteError, setAutocompleteError] = useState('');
+
+  const handleAutocompleteError = (error: AxiosError) => {
+    setAutocompleteError(`Unable to find station: ${error.message}`);
+  };
 
   const handleInput = async (input: string) => {
     setValue(input);
-    await getStationsSuggestions(input, setSuggestions);
+    await getStationsSuggestions(input, setSuggestions, handleAutocompleteError);
   };
 
   const handleChooseOption = (option: StationSuggestion) => {
@@ -51,7 +67,7 @@ const StationsAutocompleteField = ({
         placeholder={fieldPlaceholder}
         onChange={(e) => handleInput(e.target.value)}
         value={value}
-        error={error}
+        error={error || autocompleteError}
         handleBlur={onBlur}
       />
       {suggestions && (

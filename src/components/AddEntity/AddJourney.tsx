@@ -2,7 +2,7 @@ import Map from '../Map';
 import PageHead from '../PageHead/PageHead';
 import { AddEntityForm, AddJourneyContainer } from './AddEntity.styles';
 import { Title } from '@/app/styled/Typography';
-import FormTextField from '../FomField/FormFIeld';
+import FormTextField from '../FormField';
 import { useReducer, useState } from 'react';
 import { PrimaryButton, SecondaryButton } from '@/app/styled/Buttons';
 import StationsAutocompleteField from './StationAutocompleteField';

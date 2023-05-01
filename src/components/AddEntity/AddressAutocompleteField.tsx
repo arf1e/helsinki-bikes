@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import FormTextField from '../FomField/FormFIeld';
+import FormTextField from '../FormField';
 import client from '@/app/common/api';
 import { GoogleAutocompleteApiResponse, GooglePlace } from '@/app/types/google';
 import debounce from 'lodash.debounce';
@@ -15,7 +15,7 @@ const getGoogleAutocompleteSuggestions = debounce(
         const { predictions: suggestions } = data;
         dataHandler(suggestions);
       })
-      .catch((error) => handleError(error));
+      .catch(handleError);
   },
   200,
 );

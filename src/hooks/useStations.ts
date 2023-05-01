@@ -3,6 +3,7 @@ import { TSearchStations } from '../components/SearchStations/SearchStations.uti
 import { StationsApiResponse } from '../types/stations';
 import { composeQueryString } from '../common/hooks-utils';
 import client from '../common/api';
+import { AxiosError } from 'axios';
 
 type TUseStationsInput = {
   filters: TSearchStations;
@@ -15,7 +16,7 @@ type TUseStationsInput = {
 function useStations({ filters = {}, page = 1 }: TUseStationsInput) {
   const [data, setData] = useState<StationsApiResponse>({ stations: [], totalPages: 0 });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
 
   const queryString = composeQueryString(filters, page);
 
@@ -27,8 +28,8 @@ function useStations({ filters = {}, page = 1 }: TUseStationsInput) {
         setData(data);
         setLoading(false);
       })
-      .catch((error) => {
-        setError(error);
+      .catch((error: AxiosError) => {
+        setError(error.message);
         setLoading(false);
       });
   }, [queryString]);
