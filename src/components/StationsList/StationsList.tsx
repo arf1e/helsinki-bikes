@@ -1,6 +1,6 @@
 import { StationShort } from '@/app/types/stations';
 import styled from 'styled-components';
-import StationCard from '../StationCard/StationCard';
+import StationCard from '../StationCard';
 
 const StationsListContainer = styled.div`
   display: flex;
@@ -9,7 +9,7 @@ const StationsListContainer = styled.div`
   flex-wrap: wrap;
   align-items: center;
   align-content: flex-start;
-  min-height: 40vh;
+  min-height: 50vh;
   padding: ${({ theme }) => theme.appBoxPadding};
 `;
 

@@ -1,6 +1,7 @@
 import { StationShort } from '@/app/types/stations';
 import styled from 'styled-components';
 import Link from 'next/link';
+import AddressIcon from '@/app/assets/svg/address.svg';
 type Props = {
   station: StationShort;
 };
@@ -31,11 +32,22 @@ const StationCardContainer = styled(Link)`
     overflow: hidden;
     color: ${({ theme }) => theme.blackColor};
     margin-bottom: 8px;
+    transition: 0.3s;
   }
 
   .station-address {
+    transition: 0.3s;
     font-size: 12px;
     color: ${({ theme }) => theme.darkGrayColor};
+  }
+
+  .address-icon {
+    margin-right: 4px;
+
+    path {
+      transition: 0.3s;
+      fill: ${({ theme }) => theme.darkGrayColor};
+    }
   }
 
   &:hover {
@@ -46,6 +58,12 @@ const StationCardContainer = styled(Link)`
     .station-address {
       color: ${({ theme }) => theme.backgroundColor};
     }
+
+    .address-icon {
+      path {
+        fill: ${({ theme }) => theme.backgroundColor};
+      }
+    }
   }
 `;
 
@@ -53,7 +71,10 @@ const StationCard = ({ station }: Props) => {
   return (
     <StationCardContainer href={`stations/${station.id}`}>
       <strong className="station-name">{station.name}</strong>
-      <span className="station-address">{station.address}</span>
+      <div className="station-address-container">
+        <AddressIcon className="address-icon" width={12} height={12} viewBox="0 0 20 20" />
+        <span className="station-address">{station.address}</span>
+      </div>
     </StationCardContainer>
   );
 };

@@ -2,6 +2,7 @@ import { Formik } from 'formik';
 import styled from 'styled-components';
 import { TSearchStations, initialSearchStationsValues, searchStationsSchema } from './SearchStations.utils';
 import SInput from '@/app/styled/Input';
+import SearchIcon from '@/app/assets/svg/search.svg';
 import { PrimaryButton } from '@/app/styled/Buttons';
 
 const SearchForm = styled.form`
@@ -27,7 +28,9 @@ const SearchStations = ({ applyFilters }: Props) => {
             onChange={formikProps.handleChange}
             isInvalid={!!formikProps.errors.name}
           />
-          <PrimaryButton type="submit">Q</PrimaryButton>
+          <PrimaryButton type="submit">
+            <SearchIcon width={14} height={14} viewBox="0 0 20 20" />
+          </PrimaryButton>
         </SearchForm>
       )}
     </Formik>

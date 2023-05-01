@@ -1,6 +1,8 @@
 import { Subtitle } from '@/app/styled/Typography';
 import { ADD_ENTITY, ADD_JOURNEY, ADD_STATION } from '@/app/types/add';
 import styled, { css } from 'styled-components';
+import AddressIcon from '@/app/assets/svg/address.svg';
+import FlagIcon from '@/app/assets/svg/flag.svg';
 
 const SEntitySwitch = styled.div`
   flex: 1;
@@ -32,8 +34,21 @@ const EntityOption = styled.button<{ isActive: boolean }>`
   color: ${({ theme }) => theme.darkGrayColor};
   cursor: pointer;
 
+  .option__icon {
+    margin-right: 4px;
+
+    path {
+      transition: 0.3s;
+      fill: ${({ theme }) => theme.darkGrayColor};
+    }
+  }
+
   &:hover {
     color: ${({ theme }) => theme.primaryColor};
+
+    path {
+      fill: ${({ theme }) => theme.primaryColor};
+    }
   }
 
   ${({ isActive }) =>
@@ -41,6 +56,12 @@ const EntityOption = styled.button<{ isActive: boolean }>`
     css`
       color: ${({ theme }) => theme.primaryColor};
       background-color: ${({ theme }) => theme.secondaryColor};
+
+      .option__icon {
+        path {
+          fill: ${({ theme }) => theme.primaryColor};
+        }
+      }
     `}
 `;
 
@@ -54,10 +75,12 @@ const EntitySwitch = ({ entity, setEntity }: Props) => {
     <SEntitySwitch>
       <Subtitle className="subtitle">Entity type</Subtitle>
       <EntityOption isActive={entity === ADD_STATION} onClick={() => setEntity(ADD_STATION)}>
-        Station
+        <AddressIcon className="option__icon" width={14} height={14} viewBox="0 0 20 20" />
+        <span className="option__text">Station</span>
       </EntityOption>
       <EntityOption isActive={entity === ADD_JOURNEY} onClick={() => setEntity(ADD_JOURNEY)}>
-        Journey
+        <FlagIcon className="option__icon" width={14} height={14} viewBox="0 0 20 20" />
+        <span className="option__text">Journey</span>
       </EntityOption>
     </SEntitySwitch>
   );

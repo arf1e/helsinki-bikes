@@ -3,14 +3,22 @@ import FormTextField from '../FomField/FormFIeld';
 import client from '@/app/common/api';
 import { GoogleAutocompleteApiResponse, GooglePlace } from '@/app/types/google';
 import debounce from 'lodash.debounce';
+import { AxiosError } from 'axios';
 
-const getGoogleAutocompleteSuggestions = debounce(async (input = '', handler: (suggestions: GooglePlace[]) => void) => {
-  const apiResponse = await client.get<any, { data: GoogleAutocompleteApiResponse }>('/lookup/autocomplete', {
-    params: { input },
-  });
-  const suggestions = apiResponse.data.predictions;
-  handler(suggestions);
-}, 200);
+const getGoogleAutocompleteSuggestions = debounce(
+  async (input = '', dataHandler: (suggestions: GooglePlace[]) => void, handleError: (error: AxiosError) => void) => {
+    return client
+      .get<any, { data: GoogleAutocompleteApiResponse }>('/lookup/autocomplete', {
+        params: { input },
+      })
+      .then(({ data }: { data: { predictions: GooglePlace[] } }) => {
+        const { predictions: suggestions } = data;
+        dataHandler(suggestions);
+      })
+      .catch((error) => handleError(error));
+  },
+  200,
+);
 
 type Props = {
   value: string;
@@ -20,10 +28,16 @@ type Props = {
 
 const AddressAutocompleteField = ({ onChooseOption, value, setValue }: Props) => {
   const [placesSuggestions, setPlacesSuggestions] = useState<GooglePlace[]>([]);
+  const [error, setError] = useState('');
+
+  const handleAutocompleteError = (error: AxiosError) => {
+    setError(`Failed to get autocomplete results: ${error.message}`);
+  };
 
   const handleInput = async (input: string) => {
+    setError('');
     setValue(input);
-    await getGoogleAutocompleteSuggestions(input, setPlacesSuggestions);
+    await getGoogleAutocompleteSuggestions(input, setPlacesSuggestions, handleAutocompleteError);
   };
 
   const handleChooseOption = (option: GooglePlace) => {
@@ -37,6 +51,7 @@ const AddressAutocompleteField = ({ onChooseOption, value, setValue }: Props) =>
       <FormTextField
         title="Address"
         value={value}
+        error={error}
         onChange={(e) => handleInput(e.target.value)}
         placeholder="Start typing and choose an option"
       />

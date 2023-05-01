@@ -29,5 +29,7 @@
     "typescript": "5.0.3",
     "yup": "^1.0.2"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@svgr/webpack": "^7.0.0"
+  }
 }

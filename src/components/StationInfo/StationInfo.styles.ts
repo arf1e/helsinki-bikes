@@ -18,8 +18,19 @@ export const StationHeaderContainer = styled.header`
     color: ${({ theme }) => theme.primaryColor};
     transition: 0.3s;
 
+    &__icon {
+      margin-right: 4px;
+      path {
+        transition: 0.3s;
+        stroke: ${({ theme }) => theme.primaryColor};
+      }
+    }
+
     &:hover {
       color: ${({ theme }) => theme.darkGrayColor};
+      path {
+        stroke: ${({ theme }) => theme.darkGrayColor};
+      }
     }
 
     &:active {

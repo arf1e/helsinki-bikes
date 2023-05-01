@@ -111,9 +111,15 @@ const AddStation = () => {
               />
             </div>
             <div className="form-controls">
-              <PrimaryButton type="submit">Apply</PrimaryButton>
+              <PrimaryButton type="submit" disabled={formState === FORM_STATE_LOADING}>
+                Apply
+              </PrimaryButton>
               {formikProps.dirty && (
-                <SecondaryButton type="reset" onClick={formikProps.handleReset}>
+                <SecondaryButton
+                  disabled={formState === FORM_STATE_LOADING}
+                  type="reset"
+                  onClick={formikProps.handleReset}
+                >
                   Reset
                 </SecondaryButton>
               )}

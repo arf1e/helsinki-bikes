@@ -1,7 +1,7 @@
 import SBackground from './Background.styles';
 import Container from '@/app/styled/Container';
 import { ReactNode } from 'react';
-import StatusBar from '../StatusBar/StatusBar';
+import StatusBar from '../StatusBar';
 
 type Props = {
   children: ReactNode;

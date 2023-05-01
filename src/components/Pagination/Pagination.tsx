@@ -1,6 +1,7 @@
 import { PaginationProps } from '@/app/types/pagination';
 import { useCallback, useMemo } from 'react';
 import { PaginationButton, PaginationContainer } from './Pagination.styles';
+import Chevron from '@/app/assets/svg/chevron.svg';
 
 type Props = {
   pagination: PaginationProps;
@@ -35,11 +36,11 @@ const Pagination = ({ pagination, disabled }: Props) => {
         1
       </PaginationButton>
       <PaginationButton disabled={previousDisabled} onClick={handlePreviousPage}>
-        {'<'}
+        <Chevron width={14} height={14} viewBox="0 0 25 20" className="chevron chevron--previous" />
       </PaginationButton>
       <PaginationButton className="current">{currentPage}</PaginationButton>
       <PaginationButton disabled={nextDisabled} onClick={handleNextPage}>
-        {'>'}
+        <Chevron width={14} height={14} viewBox="0 0 20 20" className="chevron chevron--next" />
       </PaginationButton>
       <PaginationButton onClick={goToLastPage} disabled={nextDisabled}>
         {totalPages}

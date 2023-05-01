@@ -62,7 +62,7 @@ export default function useStatusBar() {
   }, [setStatus, setMessage]);
 
   useEffect(() => {
-    if (status !== STATUS_IDLE) {
+    if (status !== STATUS_IDLE && status !== STATUS_LOADING) {
       const timer = setTimeout(() => {
         closeStatusBar();
       }, 3500);

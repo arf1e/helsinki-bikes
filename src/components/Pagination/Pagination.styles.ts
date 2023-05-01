@@ -13,6 +13,17 @@ export const PaginationButton = styled.button`
   justify-content: center;
   align-items: center;
 
+  .chevron {
+    transition: 0.3s;
+    path {
+      transition: 0.3s;
+      stroke: ${({ theme }) => theme.primaryColor};
+    }
+    &--next {
+      transform: rotate(180deg);
+    }
+  }
+
   &.current {
     border-color: ${({ theme }) => theme.blackColor};
     color: ${({ theme }) => theme.blackColor};
@@ -29,6 +40,10 @@ export const PaginationButton = styled.button`
   &:not(.current):hover {
     background: ${({ theme }) => theme.primaryColor};
     color: ${({ theme }) => theme.backgroundColor};
+
+    path {
+      stroke: ${({ theme }) => theme.backgroundColor};
+    }
   }
 
   &:disabled {
@@ -36,9 +51,16 @@ export const PaginationButton = styled.button`
     color: ${({ theme }) => theme.grayColor};
     cursor: default;
 
+    path {
+      stroke: ${({ theme }) => theme.grayColor};
+    }
+
     &:hover {
       background: ${({ theme }) => theme.backgroundColor};
       color: ${({ theme }) => theme.grayColor};
+      path {
+        stroke: ${({ theme }) => theme.grayColor};
+      }
     }
   }
 `;

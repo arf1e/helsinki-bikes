@@ -3,6 +3,7 @@ import { TFormValues } from '../components/FilterJourneys/FilterJourneys.utils';
 import client from '../common/api';
 import { JourneysApiResponse } from '../types/journeys';
 import { composeQueryString } from '../common/hooks-utils';
+import { AxiosError } from 'axios';
 
 type TUseJourneysInput = {
   filters?: TFormValues;
@@ -20,20 +21,21 @@ type TUseJourneysInput = {
 function useJourneys({ filters = {}, page = 1 }: TUseJourneysInput = {}) {
   const [data, setData] = useState<JourneysApiResponse>({ journeys: [], totalPages: 0 });
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState('');
 
   const queryString = composeQueryString(filters, page);
 
   useEffect(() => {
     setLoading(true);
+    setError('');
     client
       .get(`journeys?${queryString}`)
       .then(({ data }: { data: JourneysApiResponse }) => {
         setData(data);
         setLoading(false);
       })
-      .catch((error) => {
-        setError(error);
+      .catch((error: AxiosError) => {
+        setError(error.message);
         setLoading(false);
       });
   }, [queryString]);

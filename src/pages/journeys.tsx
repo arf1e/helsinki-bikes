@@ -11,15 +11,21 @@ import useStatusBar from '../hooks/useStatusBar';
 
 export default function Journeys() {
   const { filters, applyFilters, page, setPage } = useFilters<TFormValues>(initialJourneysFormValues);
-  const { journeys, totalPages, loading } = useJourneys({ filters, page });
+  const { journeys, totalPages, loading, error } = useJourneys({ filters, page });
   const { notify, closeStatusBar } = useStatusBar();
 
   useEffect(() => {
-    loading ? notify({ status: 'loading', message: 'Loading journeys...' }) : closeStatusBar();
+    if (loading) {
+      notify({ status: 'loading', message: 'Loading journeys...' });
+    } else if (error) {
+      notify({ status: 'error', message: `Failed to load journeys: ${error}` });
+    } else {
+      closeStatusBar();
+    }
     return () => {
       closeStatusBar();
     };
-  }, [loading, notify, closeStatusBar]);
+  }, [loading, error, notify, closeStatusBar]);
 
   const pagination: PaginationProps = {
     currentPage: page,

@@ -15,6 +15,11 @@ export const PrimaryButton = styled.button`
   cursor: pointer;
   transition: 0.3s;
 
+  path {
+    transiton: 0.3s;
+    fill: ${({ theme }) => theme.backgroundColor};
+  }
+
   &:disabled {
     background-color: ${({ theme }) => theme.grayColor};
     cursor: default;
