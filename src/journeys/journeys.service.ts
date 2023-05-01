@@ -1,12 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { JourneyPaginationQueryDto } from 'src/common/dto/journey-pagination-query.dto';
 import { PrismaService } from 'src/prisma.service';
 import { kmToMeters, minutesToSeconds } from 'utils/journeys';
 import { JOURNEYS_PER_PAGE } from './journeys.constants';
+import { CreateJourneyDto } from 'src/common/dto/create-journey.dto';
+import { DatesService } from 'src/dates/dates.service';
 
 @Injectable()
 export class JourneysService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService, private dates: DatesService) {}
 
   /**
    * This method constructs the filtering part of the database query
@@ -142,5 +144,45 @@ export class JourneysService {
     const journeys = await this.getJourneysByQuery(query);
     const totalPages = await this.getJourneysTotalPagesCount(query);
     return { journeys, totalPages };
+  }
+
+  private async createNewJourney(data: CreateJourneyDto) {
+    try {
+      const { distance, departureTime, returnTime } = data;
+      const duration = this.dates.calculateDifferenceBetweenDatesInSeconds(
+        departureTime,
+        returnTime,
+      );
+      if (duration < 10) {
+        throw new Error('Journey duration is too low.');
+      }
+      const journey = await this.prisma.journey.create({
+        data: {
+          distance,
+          departureTime: new Date(departureTime),
+          returnTime: new Date(returnTime),
+          duration,
+          departure: {
+            connect: {
+              id: data.departureId,
+            },
+          },
+          return: {
+            connect: {
+              id: data.returnId,
+            },
+          },
+        },
+      });
+      return journey;
+    } catch (error) {
+      throw new InternalServerErrorException(
+        'Database Error: Failed to create new journey',
+      );
+    }
+  }
+
+  async createOne(data: CreateJourneyDto) {
+    return this.createNewJourney(data);
   }
 }

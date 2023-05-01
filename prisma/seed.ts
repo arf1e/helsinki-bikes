@@ -15,7 +15,7 @@ const prisma = new PrismaClient();
  * This function will read the given csv file and execute the given function on each row of data.
  * @param filepath path to the csv file
  * @param dataHandler function that will be executed on each row of data.
- * @optional renamedHeaders
+ * @optional renamedHeaders custom headers for the csv file
  */
 const handleCsvImport = (
   filepath: string,
@@ -66,9 +66,6 @@ const seedStations = async () => {
     .catch(console.error);
 };
 
-/**
- * This function loads
- */
 const loadJourneysToTheDatabase = async (queue) => {
   console.log(`Inserting ${queue.length} journeys to the database...`);
   return prisma.journey.createMany({
@@ -77,9 +74,6 @@ const loadJourneysToTheDatabase = async (queue) => {
   });
 };
 
-/**
- * This function will seed the database with journeys data.
- */
 const seedJourneys = async (
   stationIds: number[],
   filename: string,
@@ -120,8 +114,7 @@ const seedJourneys = async (
   await handleCsvImport(journeysPath, journeysHandler, JOURNEYS_CSV_HEADERS)
     .then(() => {
       console.log(
-        'FINISH CSV IMPORT, CURRENT QUEUE LENGTH:',
-        journeysQueue.length,
+        `FINISH CSV IMPORT, CURRENT QUEUE LENGTH: ${journeysQueue.length}`,
       );
       return journeysQueue.length > 0
         ? loadJourneysToTheDatabase(journeysQueue)

@@ -140,11 +140,13 @@ describe('StationsService', () => {
       const queryResult = await service.findOne(testId);
 
       expect(queryResult).toEqual({
-        station: mockStation,
-        journeysCount: mockJourneysCount,
-        topStations: {
-          fromHere: mockTopStationsFromHere.output,
-          toHere: mockTopStationsToHere.output,
+        station: {
+          ...mockStation,
+          journeysCount: mockJourneysCount,
+          topStations: {
+            fromHere: mockTopStationsFromHere.output,
+            toHere: mockTopStationsToHere.output,
+          },
         },
       });
     });

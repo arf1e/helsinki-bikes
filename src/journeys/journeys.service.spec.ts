@@ -3,6 +3,7 @@ import { JourneysService } from './journeys.service';
 import { PrismaService } from '../prisma.service';
 import { JOURNEYS_PER_PAGE } from './journeys.constants';
 import { kmToMeters, minutesToSeconds } from 'utils/journeys';
+import { DatesService } from 'src/dates/dates.service';
 
 describe('JourneysService', () => {
   let service: JourneysService;
@@ -18,6 +19,7 @@ describe('JourneysService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         JourneysService,
+        DatesService,
         { provide: PrismaService, useValue: mockPrismaService },
       ],
     }).compile();

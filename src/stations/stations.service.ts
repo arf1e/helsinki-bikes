@@ -1,13 +1,19 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import {
   DESTINATION_FROM,
   DESTINATION_TO,
   DESTINATION_TYPE,
   STATIONS_PER_PAGE,
+  TAKE_STATIONS_ON_SEARCH,
 } from './stations.constants';
 import { StationPaginationQueryDto } from 'src/common/dto/station-pagination-query.dto';
 import { CreateStationDto } from 'src/common/dto/create-station.dto';
+import { LookupStationsDto } from 'src/common/dto/lookup-stations.dto';
 
 @Injectable()
 export class StationsService {
@@ -165,13 +171,61 @@ export class StationsService {
     });
   }
 
+  private async checkIfStationAlreadyExists(data: CreateStationDto) {
+    const { name, address } = data;
+    const station = await this.prisma.station.findUnique({
+      where: {
+        name_address: {
+          name,
+          address,
+        },
+      },
+      select: {
+        id: true,
+      },
+    });
+    return Boolean(station);
+  }
+
   /**
    * This method creates a new station in the database
    * @param data Object containing new station data
-   * @returns Promise resolving to a new station object
+   * @returns Promise resolving to a newly created station object
+   * @throws ServerErrorException if failed to create a new station
    */
   private async createNewStation(data: CreateStationDto) {
-    return this.prisma.station.create({ data });
+    try {
+      const stationAlreadyExists = await this.checkIfStationAlreadyExists(data);
+      if (stationAlreadyExists) {
+        throw new BadRequestException({
+          message: 'Station with given name and address already exists.',
+        });
+      }
+      const station = await this.prisma.station.create({ data });
+      return station;
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  /**
+   * This method queries the database for stations suggestions based on the given name
+   * @param query Query object containing station name
+   * @returns Promise resolving to an array of found stations
+   */
+  private async getStationsSuggestions(query: LookupStationsDto) {
+    if (!query.name) return [];
+    return this.prisma.station.findMany({
+      where: { name: { startsWith: query.name, mode: 'insensitive' } },
+      take: TAKE_STATIONS_ON_SEARCH,
+      select: {
+        id: true,
+        name: true,
+        address: true,
+        x: true,
+        y: true,
+      },
+    });
   }
 
   /**
@@ -232,5 +286,14 @@ export class StationsService {
    */
   async createOne(data: CreateStationDto) {
     return this.createNewStation(data);
+  }
+
+  /**
+   * Interface method to access the database for stations suggestions on given name
+   * @param query Query object containing name of the searched station
+   * @returns Promise resolving to an array of stations
+   */
+  async searchStations(query: LookupStationsDto) {
+    return this.getStationsSuggestions(query);
   }
 }
