@@ -4,19 +4,7 @@ const ACTIVE_COLOR_RGB = 'rgb(98, 104, 255)';
 describe('Journeys Form', () => {
   beforeEach(() => {
     cy.visit('/journeys');
-    cy.intercept('GET', '**/journeys?*', { fixture: 'journeys-mock.json' }).as('rootJourneysMock');
-  });
-
-  it('sends correct request on submit', () => {
-    const departureStationInput = cy.get('input[name="departureStationName"]');
-    departureStationInput.type('test departure station');
-    cy.intercept('GET', '**/journeys?*', []).as('getJourneys');
-    cy.get('button[type="submit"]').click();
-    cy.wait('@getJourneys').should(({ request }) => {
-      console.log('REQUEST', request);
-      expect(request.query).to.have.property('departureStationName');
-      expect(request.query.departureStationName).to.include('test departure station');
-    });
+    cy.intercept('GET', '**/journeys?*', { fixture: 'journeys-mock.json' }).as('rootJourneysApiMock');
   });
 
   it('disables form submit if there are incorrect values', () => {
@@ -119,5 +107,42 @@ describe('Journeys Form', () => {
 
     cy.get('button[type="reset"]').click();
     cy.get('input[name="departureStationName"]').should('not.have.value');
+  });
+
+  it('sends correct request on submit', () => {
+    const departureStationInput = cy.get('input[name="departureStationName"]');
+    departureStationInput.type('test departure station');
+    cy.intercept('GET', '**/journeys?*', []).as('getJourneys');
+    cy.get('button[type="submit"]').click();
+    cy.wait('@getJourneys').should(({ request }) => {
+      expect(request.query).to.have.property('departureStationName');
+      expect(request.query.departureStationName).to.include('test departure station');
+    });
+  });
+});
+
+describe('Journeys Pagination', () => {
+  beforeEach(() => {
+    cy.visit('/journeys');
+    cy.intercept('GET', '**/journeys?*', { fixture: 'journeys-mock.json' }).as('rootJourneysApiMock');
+  });
+  it('passes the page to API query', () => {
+    cy.wait('@rootJourneysApiMock');
+    cy.intercept('GET', '**/journeys?*', { fixture: 'journeys-mock.json' }).as('paginationJourneysApiMock');
+    cy.get('[data-cy="pagination-next"]').click();
+    cy.wait('@paginationJourneysApiMock').should(({ request }) => {
+      expect(request.query).to.have.property('page');
+      expect(request.query.page).to.be.equal('2');
+    });
+    cy.intercept('GET', '**/journeys?*', { fixture: 'journeys-mock.json' }).as('paginationJourneysApiMock');
+    cy.get('[data-cy="pagination-last"]').click();
+    cy.wait('@paginationJourneysApiMock').should(({ request }) => {
+      expect(request.query.page).to.be.equal('10');
+    });
+    cy.intercept('GET', '**/journeys?*', { fixture: 'journeys-mock.json' }).as('paginationJourneysApiMock');
+    cy.get('[data-cy="pagination-previous"]').click();
+    cy.wait('@paginationJourneysApiMock').should(({ request }) => {
+      expect(request.query.page).to.be.equal('9');
+    });
   });
 });
