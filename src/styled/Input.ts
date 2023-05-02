@@ -7,18 +7,17 @@ const SInput = styled.input<{ isInvalid?: boolean }>`
   border-radius: 4px;
   padding: 12px 8px;
   font-size: 14px;
-  color: ${({ theme }) => theme.blackColor}
+  color: ${({ theme }) => theme.blackColor};
+
   ${({ isInvalid }) =>
     isInvalid &&
     css`
-      background: red;
       border-color: ${({ theme }) => theme.errorColor};
     `}
 
   &:placeholder {
     color: ${({ theme }) => theme.grayColor};
   }
-
 
   &:hover,
   &:active,

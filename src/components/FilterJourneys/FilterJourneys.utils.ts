@@ -36,6 +36,7 @@ export const initialJourneysFormValues: TFormValues = {
   departureStationName: '',
   returnStationName: '',
   minDistance: '',
+  maxDistance: '',
   minDuration: '',
   maxDuration: '',
 };

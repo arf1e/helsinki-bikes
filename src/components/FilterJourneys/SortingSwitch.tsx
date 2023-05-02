@@ -20,6 +20,7 @@ const SortingSwitch = ({ options, value, handleChange }: Props) => {
           onClick={() => handleChange(option.value)}
           type="button"
           key={option.value}
+          data-cy={`sorting-${option.value}`}
         >
           {option.title}
         </SSortingOption>
