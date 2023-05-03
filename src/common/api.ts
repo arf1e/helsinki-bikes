@@ -1,5 +1,7 @@
 import axios from 'axios';
 
-const client = axios.create({ baseURL: 'http://localhost:3000/', timeout: 4500 });
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000';
+
+const client = axios.create({ baseURL: API_URL, timeout: 4500 });
 
 export default client;

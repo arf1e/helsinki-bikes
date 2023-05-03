@@ -5,7 +5,7 @@ import StatusBarContainer from './StatusBar.styles';
 const StatusBar = () => {
   const { status, message, closeStatusBar } = useStatusBar();
   return (
-    <StatusBarContainer onClick={closeStatusBar} status={status}>
+    <StatusBarContainer onClick={closeStatusBar} status={status} data-cy={`statusbar-${status}`}>
       {status === STATUS_LOADING && <LoadingIcon className="loading-icon" width={14} height={14} viewBox="0 0 20 20" />}
       <span className="message">{message}</span>
     </StatusBarContainer>
