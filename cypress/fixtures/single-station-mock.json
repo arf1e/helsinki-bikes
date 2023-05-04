@@ -1,0 +1,72 @@
+{
+  "station": {
+    "id": 1,
+    "name": "Kaivopuisto",
+    "city": " ",
+    "operator": " ",
+    "x": "24.9502114714031",
+    "y": "60.155369615074",
+    "address": "Meritori 1",
+    "capacity": 30,
+    "journeysCount": {
+      "fromHere": 5243,
+      "toHere": 5682
+    },
+    "topStations": {
+      "fromHere": [
+        {
+          "id": 12,
+          "count": 286,
+          "name": "Kanavaranta"
+        },
+        {
+          "id": 11,
+          "count": 244,
+          "name": "Unioninkatu"
+        },
+        {
+          "id": 6,
+          "count": 209,
+          "name": "Hietalahdentori"
+        },
+        {
+          "id": 30,
+          "count": 198,
+          "name": "Itämerentori"
+        },
+        {
+          "id": 1,
+          "count": 170,
+          "name": "Kaivopuisto"
+        }
+      ],
+      "toHere": [
+        {
+          "id": 30,
+          "count": 274,
+          "name": "Itämerentori"
+        },
+        {
+          "id": 6,
+          "count": 214,
+          "name": "Hietalahdentori"
+        },
+        {
+          "id": 63,
+          "count": 214,
+          "name": "Jätkäsaarenlaituri"
+        },
+        {
+          "id": 12,
+          "count": 176,
+          "name": "Kanavaranta"
+        },
+        {
+          "id": 65,
+          "count": 176,
+          "name": "Hernesaarenranta"
+        }
+      ]
+    }
+  }
+}

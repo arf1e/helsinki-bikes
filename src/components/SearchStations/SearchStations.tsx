@@ -21,7 +21,7 @@ const SearchStations = ({ applyFilters }: Props) => {
             onChange={formikProps.handleChange}
             isInvalid={!!formikProps.errors.name}
           />
-          <PrimaryButton type="submit">
+          <PrimaryButton type="submit" disabled={Boolean(formikProps.errors.name)}>
             <SearchIcon width={14} height={14} viewBox="0 0 20 20" />
           </PrimaryButton>
         </SearchForm>

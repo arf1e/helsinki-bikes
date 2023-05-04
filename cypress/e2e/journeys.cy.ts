@@ -1,10 +1,9 @@
-const ERROR_COLOR_RGB = 'rgb(255, 98, 107)';
-const ACTIVE_COLOR_RGB = 'rgb(98, 104, 255)';
+import { ACTIVE_COLOR_RGB, ERROR_COLOR_RGB } from '../test-constants';
 
 describe('Journeys Form', () => {
   beforeEach(() => {
     cy.visit('/journeys');
-    cy.intercept('GET', '**/journeys?*', { fixture: 'journeys-mock.json' }).as('rootJourneysApiMock');
+    cy.intercept('GET', '/journeys?*', { fixture: 'journeys-mock.json' }).as('rootJourneysApiMock');
   });
 
   it('disables form submit if there are incorrect values', () => {
@@ -112,7 +111,7 @@ describe('Journeys Form', () => {
   it('sends correct request on submit', () => {
     const departureStationInput = cy.get('input[name="departureStationName"]');
     departureStationInput.type('test departure station');
-    cy.intercept('GET', '**/journeys?*', []).as('getJourneys');
+    cy.intercept('GET', '/journeys?*', []).as('getJourneys');
     cy.get('button[type="submit"]').click();
     cy.wait('@getJourneys').should(({ request }) => {
       expect(request.query).to.have.property('departureStationName');
@@ -124,24 +123,24 @@ describe('Journeys Form', () => {
 describe('Journeys Pagination', () => {
   beforeEach(() => {
     cy.visit('/journeys');
-    cy.intercept('GET', '**/journeys?*', { fixture: 'journeys-mock.json' }).as('rootJourneysApiMock');
+    cy.intercept('GET', '/journeys?*', { fixture: 'journeys-mock.json' }).as('rootJourneysApiMock');
   });
   it('passes the page to API query', () => {
-    cy.wait('@rootJourneysApiMock');
-    cy.intercept('GET', '**/journeys?*', { fixture: 'journeys-mock.json' }).as('paginationJourneysApiMock');
+    cy.wait('@rootJourneysApiMock').should(({ request }) => {
+      expect(request.query).to.have.property('page');
+      expect(request.query.page).to.be.equal('1');
+    });
     cy.get('[data-cy="pagination-next"]').click();
-    cy.wait('@paginationJourneysApiMock').should(({ request }) => {
+    cy.wait('@rootJourneysApiMock').should(({ request }) => {
       expect(request.query).to.have.property('page');
       expect(request.query.page).to.be.equal('2');
     });
-    cy.intercept('GET', '**/journeys?*', { fixture: 'journeys-mock.json' }).as('paginationJourneysApiMock');
     cy.get('[data-cy="pagination-last"]').click();
-    cy.wait('@paginationJourneysApiMock').should(({ request }) => {
+    cy.wait('@rootJourneysApiMock').should(({ request }) => {
       expect(request.query.page).to.be.equal('10');
     });
-    cy.intercept('GET', '**/journeys?*', { fixture: 'journeys-mock.json' }).as('paginationJourneysApiMock');
     cy.get('[data-cy="pagination-previous"]').click();
-    cy.wait('@paginationJourneysApiMock').should(({ request }) => {
+    cy.wait('@rootJourneysApiMock').should(({ request }) => {
       expect(request.query.page).to.be.equal('9');
     });
   });
@@ -153,7 +152,7 @@ describe('Journeys Notifications', () => {
   });
 
   it('indicates journeys loading state', () => {
-    cy.intercept('GET', '**/journeys?*', { fixture: 'journeys-mock.json', delay: 100 }).as('loadingStateApiMock');
+    cy.intercept('GET', '/journeys?*', { fixture: 'journeys-mock.json', delay: 100 }).as('loadingStateApiMock');
     cy.get('[data-cy="statusbar-LOADING"]').should('be.visible');
     cy.wait('@loadingStateApiMock');
     cy.get('[data-cy="statusbar-IDLE"]').should('exist');
@@ -161,7 +160,7 @@ describe('Journeys Notifications', () => {
   });
 
   it('indicates journeys error state and hides it after click', () => {
-    cy.intercept('GET', '**/journeys?*', {
+    cy.intercept('GET', '/journeys?*', {
       statusCode: 400,
       body: {
         message: 'Test error',
