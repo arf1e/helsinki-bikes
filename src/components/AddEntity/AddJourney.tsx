@@ -16,21 +16,35 @@ import coordinatesReducer, {
   stationsPointsInitialState,
 } from './newJourneyMapReducer';
 import {
+  DEPARTURE_STATION_INPUT,
   FIELD_DEPARTURE_STATION_ID,
   FIELD_RETURN_STATION_ID,
   FORM_STATE,
-  FORM_STATE_ERROR,
   FORM_STATE_IDLE,
   FORM_STATE_LOADING,
+  RETURN_STATION_INPUT,
+  STATIONS_INPUTS,
   STATION_FIELDS,
   TAddJourneyForm,
 } from './AddEntity.types';
 import { DateTimeInput } from '@/app/styled/DateTimeInput';
 import useStatusBar from '@/app/hooks/useStatusBar';
 import client from '@/app/common/api';
+import stationsAutocompleteErrorsReducer, {
+  CLEAR_AUTOCOMPLETE_ERRORS,
+  initStationsAutocompleteErrorsState,
+  mapStationToErrorActionType,
+  stationsAutocompleteErrorsInitialState,
+} from './newJourneyAutocompleteErrorsReducer';
+import FormErrors from './FormErrors';
 
 const AddJourney = () => {
-  const [points, dispatch] = useReducer(coordinatesReducer, stationsPointsInitialState, initStationCoords);
+  const [points, dispatchPoints] = useReducer(coordinatesReducer, stationsPointsInitialState, initStationCoords);
+  const [autocompleteErrors, dispatchAutocompleteErrors] = useReducer(
+    stationsAutocompleteErrorsReducer,
+    stationsAutocompleteErrorsInitialState,
+    initStationsAutocompleteErrorsState,
+  );
   const [formState, setFormState] = useState<FORM_STATE>(FORM_STATE_IDLE);
   const { notify } = useStatusBar();
 
@@ -39,17 +53,18 @@ const AddJourney = () => {
     formikProps: FormikProps<TAddJourneyForm>,
     field: STATION_FIELDS,
   ) => {
+    dispatchAutocompleteErrors({ type: 'CLEAR_AUTOCOMPLETE_ERRORS', payload: '' });
     formikProps.setFieldValue(field, station.id);
     const { x, y } = station;
     const type = mapStationFieldToType(field);
-    dispatch({ type, payload: { x, y } });
+    dispatchPoints({ type, payload: { x, y } });
   };
 
   const handleReturnDateInputBlur = (formikProps: FormikProps<TAddJourneyForm>) => {
     const isDurationLongEnough = isJourneyDurationLongEnough(formikProps);
     if (!isDurationLongEnough) {
       if (!formikProps.errors.returnDate) {
-        formikProps.setFieldError('returnDate', 'Journey duration is too low.');
+        formikProps.setFieldError('returnDate', 'Journey duration should be at least 10 seconds long.');
       }
     } else {
       formikProps.setFieldError('returnDate', undefined);
@@ -66,16 +81,23 @@ const AddJourney = () => {
       returnTime: values.returnDate,
       distance: values.distance,
     };
-    const response = await client.post('/journeys/add', requestData);
-    if (response.status === 201) {
-      notify({ status: 'success', message: 'New journey has been successfully created!' });
-      setFormState(FORM_STATE_IDLE);
-      resetForm();
-      dispatch({ type: RESET_COORDINATES, payload: { x: 'reset', y: 'reset' } });
-      return;
-    }
-    setFormState(FORM_STATE_ERROR);
-    notify({ status: 'error', message: 'Failed to create new journey.' });
+    await client
+      .post('/journeys/add', requestData)
+      .then((response) => {
+        if (response.status === 201) {
+          setFormState(FORM_STATE_IDLE);
+          notify({ status: 'success', message: 'New journey has been successfully created!' });
+          resetForm();
+          dispatchPoints({ type: RESET_COORDINATES, payload: { x: '', y: '' } });
+          return;
+        }
+        throw new Error('Unexpected response code. Please check Network tab in your devtools.');
+      })
+      .catch((error) => {
+        const message = error.response?.data?.message || 'Failed to reach the server to create a new station.';
+        notify({ status: 'error', message });
+        setFormState(FORM_STATE_IDLE);
+      });
   };
 
   /**
@@ -86,8 +108,19 @@ const AddJourney = () => {
     formikProps.handleChange(field)(e);
   };
 
+  const handleAutocompleteError = (error: string, field: STATIONS_INPUTS) => {
+    const type = mapStationToErrorActionType(field);
+    dispatchAutocompleteErrors({ type, payload: error });
+  };
+
+  const handleFormReset = (e: any, resetHandler: (e: any) => void) => {
+    dispatchPoints({ type: RESET_COORDINATES, payload: { x: '', y: '' } });
+    dispatchAutocompleteErrors({ type: CLEAR_AUTOCOMPLETE_ERRORS, payload: '' });
+    return resetHandler(e);
+  };
+
   return (
-    <AddJourneyContainer>
+    <AddJourneyContainer data-cy="add-journey-form">
       <PageHead title="New Journey" />
       <Formik
         validationSchema={journeyValidationSchema}
@@ -110,12 +143,14 @@ const AddJourney = () => {
               />
             </div>
             <StationsAutocompleteField
-              value={formikProps.values.departureStationInput}
-              setValue={formikProps.handleChange('departureStationInput')}
+              value={formikProps.values[DEPARTURE_STATION_INPUT]}
+              setValue={formikProps.handleChange(DEPARTURE_STATION_INPUT)}
               fieldTitle="Departure station"
-              error={formikProps.touched.departureStationInput ? formikProps.errors.departureStationInput : ''}
+              autocompleteError={autocompleteErrors[DEPARTURE_STATION_INPUT]}
+              setAutocompleteError={(error) => handleAutocompleteError(error, DEPARTURE_STATION_INPUT)}
+              error={formikProps.touched[DEPARTURE_STATION_INPUT] ? formikProps.errors[DEPARTURE_STATION_INPUT] : ''}
               fieldPlaceholder="Start typing..."
-              onBlur={formikProps.handleBlur('departureStationInput')}
+              onBlur={formikProps.handleBlur(DEPARTURE_STATION_INPUT)}
               onChooseOption={(option) => handleChooseStation(option, formikProps, FIELD_DEPARTURE_STATION_ID)}
             />
             <div className="field">
@@ -126,14 +161,23 @@ const AddJourney = () => {
                   value={formikProps.values.departureDate}
                   step="1"
                   onChange={formikProps.handleChange('departureDate')}
+                  onBlur={formikProps.handleBlur('departureDate')}
+                  error={formikProps.touched.departureDate ? formikProps.errors.departureDate : ''}
                 />
+                {formikProps.touched.departureDate && (
+                  <span className="field-error">{formikProps.errors.departureDate}</span>
+                )}
               </label>
             </div>
             <StationsAutocompleteField
               value={formikProps.values.returnStationInput}
-              setValue={formikProps.handleChange('returnStationInput')}
+              setValue={formikProps.handleChange(RETURN_STATION_INPUT)}
               fieldTitle="Return station"
               fieldPlaceholder="Start typing..."
+              autocompleteError={autocompleteErrors[RETURN_STATION_INPUT]}
+              error={formikProps.touched[RETURN_STATION_INPUT] ? formikProps.errors[RETURN_STATION_INPUT] : ''}
+              setAutocompleteError={(error) => handleAutocompleteError(error, RETURN_STATION_INPUT)}
+              onBlur={formikProps.handleBlur(RETURN_STATION_INPUT)}
               onChooseOption={(option) => handleChooseStation(option, formikProps, FIELD_RETURN_STATION_ID)}
             />
             <div className="field">
@@ -151,9 +195,21 @@ const AddJourney = () => {
                 {formikProps.touched.returnDate && <span className="field-error">{formikProps.errors.returnDate}</span>}
               </label>
             </div>
+            <FormErrors
+              shouldDisplay={formikProps.submitCount > 0}
+              errors={[formikProps.errors[FIELD_DEPARTURE_STATION_ID], formikProps.errors[FIELD_RETURN_STATION_ID]]}
+            />
             <div className="form-controls">
-              <PrimaryButton type="submit">Submit</PrimaryButton>
-              <SecondaryButton type="reset">Reset</SecondaryButton>
+              <PrimaryButton type="submit" disabled={formState === FORM_STATE_LOADING}>
+                Submit
+              </PrimaryButton>
+              <SecondaryButton
+                type="reset"
+                disabled={formState === FORM_STATE_LOADING}
+                onClick={(e: any) => handleFormReset(e, formikProps.handleReset)}
+              >
+                Reset
+              </SecondaryButton>
             </div>
           </AddEntityForm>
         )}

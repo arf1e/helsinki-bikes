@@ -51,7 +51,7 @@ export const AddEntityForm = styled.form`
       width: 100%;
     }
 
-    .field-error {
+    .form-error {
       font-size: 12px;
       margin-top: 4px;
       color: ${({ theme }) => theme.errorColor};
@@ -80,6 +80,7 @@ export const AddEntityForm = styled.form`
       position: absolute;
       display: flex;
       width: 100%;
+      z-index: 2;
       flex-direction: column;
       top: 100%;
       .suggestions__suggestion {
@@ -119,6 +120,14 @@ export const AddEntityForm = styled.form`
           }
         }
       }
+    }
+  }
+
+  .form-errors {
+    flex-direction: column;
+
+    .field-error:not(.field-error:last-child) {
+      margin-bottom: 4px;
     }
   }
 `;

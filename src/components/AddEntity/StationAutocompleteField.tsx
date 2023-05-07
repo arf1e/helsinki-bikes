@@ -10,6 +10,7 @@ const getStationsSuggestions = debounce(
     name = '',
     dataHandler: (suggestions: StationSuggestion[]) => void,
     handleError: (error: AxiosError) => void,
+    clearError: () => void,
   ) => {
     return client
       .get<any, { data: StationsSuggestionsApiResponse }>('/lookup/stations', {
@@ -17,6 +18,7 @@ const getStationsSuggestions = debounce(
       })
       .then(({ data }: { data: StationSuggestion[] }) => {
         dataHandler(data);
+        clearError();
       })
       .catch(handleError);
   },
@@ -30,7 +32,9 @@ type Props = {
   setValue: (value: string) => void;
   onChooseOption: (option: StationSuggestion) => void;
   error?: string;
-  onBlur?: (e: any) => void;
+  autocompleteError: string;
+  setAutocompleteError: (error: string) => void;
+  onBlur: (e: any) => void;
 };
 
 const StationsAutocompleteField = ({
@@ -40,24 +44,34 @@ const StationsAutocompleteField = ({
   fieldTitle,
   fieldPlaceholder,
   error,
+  setAutocompleteError,
+  autocompleteError,
   onBlur,
 }: Props) => {
   const [suggestions, setSuggestions] = useState<StationSuggestion[]>([]);
-  const [autocompleteError, setAutocompleteError] = useState('');
 
   const handleAutocompleteError = (error: AxiosError) => {
     setAutocompleteError(`Unable to find station: ${error.message}`);
   };
 
+  const clearAutocompleteError = () => {
+    setAutocompleteError('');
+  };
+
   const handleInput = async (input: string) => {
     setValue(input);
-    await getStationsSuggestions(input, setSuggestions, handleAutocompleteError);
+    await getStationsSuggestions(input, setSuggestions, handleAutocompleteError, clearAutocompleteError);
   };
 
   const handleChooseOption = (option: StationSuggestion) => {
     setValue(option.name);
     onChooseOption(option);
     setSuggestions([]);
+  };
+
+  const handleBlur = (e: any) => {
+    setSuggestions([]);
+    onBlur(e);
   };
 
   return (
@@ -68,9 +82,9 @@ const StationsAutocompleteField = ({
         onChange={(e) => handleInput(e.target.value)}
         value={value}
         error={error || autocompleteError}
-        handleBlur={onBlur}
+        handleBlur={handleBlur}
       />
-      {suggestions && (
+      {value.length > 0 && suggestions && (
         <div className="suggestions">
           {suggestions.map((elt) => (
             <button

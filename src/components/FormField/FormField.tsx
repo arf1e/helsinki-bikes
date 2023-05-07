@@ -11,7 +11,7 @@ type Props = {
   handleBlur?: (e: any) => void;
 };
 
-const FormTextField = ({ value, title, onChange, error, placeholder, handleBlur }: Props) => {
+const FormTextField = ({ value, title, onChange, error, placeholder, handleBlur, ...rest }: Props) => {
   return (
     <SFormField>
       <label htmlFor={title}>{title}</label>
@@ -23,6 +23,7 @@ const FormTextField = ({ value, title, onChange, error, placeholder, handleBlur 
         onInput={onChange}
         onBlur={handleBlur}
         isInvalid={Boolean(error)}
+        {...rest}
       />
       {error && <span className="error">{error}</span>}
     </SFormField>

@@ -10,8 +10,11 @@ export type TAddStationForm = {
 
 export const FIELD_DEPARTURE_STATION_ID = 'departureId';
 export const FIELD_RETURN_STATION_ID = 'returnId';
+export const DEPARTURE_STATION_INPUT = 'departureStationInput';
+export const RETURN_STATION_INPUT = 'returnStationInput';
 
 export type STATION_FIELDS = typeof FIELD_DEPARTURE_STATION_ID | typeof FIELD_RETURN_STATION_ID;
+export type STATIONS_INPUTS = typeof DEPARTURE_STATION_INPUT | typeof RETURN_STATION_INPUT;
 
 export type TAddJourneyForm = {
   [FIELD_DEPARTURE_STATION_ID]: number | null;
@@ -19,17 +22,12 @@ export type TAddJourneyForm = {
   departureDate: string;
   returnDate: string;
   distance: string;
-  departureStationInput: string;
-  returnStationInput: string;
+  [DEPARTURE_STATION_INPUT]: string;
+  [RETURN_STATION_INPUT]: string;
 };
 
 export const FORM_STATE_IDLE = 'FORM_IDLE';
 export const FORM_STATE_LOADING = 'FORM_LOADING';
 export const FORM_STATE_SUCCESS = 'FORM_SUCCESS';
-export const FORM_STATE_ERROR = 'FORM_ERROR';
 
-export type FORM_STATE =
-  | typeof FORM_STATE_IDLE
-  | typeof FORM_STATE_LOADING
-  | typeof FORM_STATE_SUCCESS
-  | typeof FORM_STATE_ERROR;
+export type FORM_STATE = typeof FORM_STATE_IDLE | typeof FORM_STATE_LOADING | typeof FORM_STATE_SUCCESS;

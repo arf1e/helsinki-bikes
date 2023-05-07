@@ -74,11 +74,19 @@ const EntitySwitch = ({ entity, setEntity }: Props) => {
   return (
     <SEntitySwitch>
       <Subtitle className="subtitle">Entity type</Subtitle>
-      <EntityOption isActive={entity === ADD_STATION} onClick={() => setEntity(ADD_STATION)}>
+      <EntityOption
+        data-cy="option-add-station"
+        isActive={entity === ADD_STATION}
+        onClick={() => setEntity(ADD_STATION)}
+      >
         <AddressIcon className="option__icon" width={14} height={14} viewBox="0 0 20 20" />
         <span className="option__text">Station</span>
       </EntityOption>
-      <EntityOption isActive={entity === ADD_JOURNEY} onClick={() => setEntity(ADD_JOURNEY)}>
+      <EntityOption
+        data-cy="option-add-journey"
+        isActive={entity === ADD_JOURNEY}
+        onClick={() => setEntity(ADD_JOURNEY)}
+      >
         <FlagIcon className="option__icon" width={14} height={14} viewBox="0 0 20 20" />
         <span className="option__text">Journey</span>
       </EntityOption>

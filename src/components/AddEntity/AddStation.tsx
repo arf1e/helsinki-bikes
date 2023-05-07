@@ -11,25 +11,36 @@ import PageHead from '../PageHead/PageHead';
 import AddressAutocompleteField from './AddressAutocompleteField';
 import { AddEntityForm, AddStationContainer } from './AddEntity.styles';
 import { PrimaryButton, SecondaryButton } from '@/app/styled/Buttons';
-import { FORM_STATE, FORM_STATE_ERROR, FORM_STATE_IDLE, FORM_STATE_LOADING, TAddStationForm } from './AddEntity.types';
+import { FORM_STATE, FORM_STATE_IDLE, FORM_STATE_LOADING, TAddStationForm } from './AddEntity.types';
 import useStatusBar from '@/app/hooks/useStatusBar';
+import FormErrors from './FormErrors';
+import { AxiosError } from 'axios';
 
 const AddStation = () => {
   const [points, setPoints] = useState<Coordinates[]>([]);
   const [formState, setFormState] = useState<FORM_STATE>(FORM_STATE_IDLE);
+  const [autocompleteError, setAutocompleteError] = useState('');
+
   const { notify } = useStatusBar();
 
   const chooseAutoCompleteOption = async (option: GooglePlace, formikProps: FormikProps<TAddStationForm>) => {
+    setAutocompleteError('');
     formikProps.setFieldValue('address', option.main_text);
-    const response = await client.get('/lookup/coordinates', {
-      params: {
-        placeId: option.place_id,
-      },
-    });
-    const { lat, lng } = response.data;
-    formikProps.setFieldValue('x', lng.toString());
-    formikProps.setFieldValue('y', lat.toString());
-    setPoints([{ x: lng, y: lat }]);
+    await client
+      .get('/lookup/coordinates', {
+        params: {
+          placeId: option.place_id,
+        },
+      })
+      .then((response) => {
+        const { lat, lng } = response.data;
+        formikProps.setFieldValue('x', lng.toString());
+        formikProps.setFieldValue('y', lat.toString());
+        setPoints([{ x: lng, y: lat }]);
+      })
+      .catch((error: AxiosError) => {
+        notify({ status: 'error', message: `Could not resolve address coordinates: ${error.message}` });
+      });
   };
 
   const handleFormSubmit = async (values: TAddStationForm, resetForm: () => void) => {
@@ -43,17 +54,26 @@ const AddStation = () => {
           setFormState(FORM_STATE_IDLE);
           resetForm();
           setPoints([]);
+          setAutocompleteError('');
+          return;
         }
+        throw new Error('Unexpected response code. Please check Network tab in your devtools.');
       })
       .catch((error) => {
         const message = error.response?.data?.message || 'Failed to reach the server to create a new station.';
         notify({ status: 'error', message });
-        setFormState(FORM_STATE_ERROR);
+        setFormState(FORM_STATE_IDLE);
       });
   };
 
+  const handleFormReset = (e: any, resetHandler: (e: any) => void) => {
+    setPoints([]);
+    setAutocompleteError('');
+    return resetHandler(e);
+  };
+
   return (
-    <AddStationContainer>
+    <AddStationContainer data-cy="add-station-form">
       <PageHead title="New Station" />
       <Formik
         onSubmit={(values, { resetForm }) => handleFormSubmit(values, resetForm)}
@@ -73,12 +93,18 @@ const AddStation = () => {
                 placeholder="Station name"
                 handleBlur={formikProps.handleBlur('name')}
                 error={formikProps.touched.name ? formikProps.errors.name : ''}
+                data-cy="input-name"
               />
             </div>
             <AddressAutocompleteField
               onChooseOption={(option) => chooseAutoCompleteOption(option, formikProps)}
               value={formikProps.values.address}
               setValue={formikProps.handleChange('address')}
+              error={formikProps.touched.address ? formikProps.errors.address : ''}
+              handleBlur={formikProps.handleBlur('address')}
+              autocompleteError={autocompleteError}
+              setAutocompleteError={setAutocompleteError}
+              testId="input-address"
             />
             <div className="field field--capacity">
               <FormTextField
@@ -88,6 +114,7 @@ const AddStation = () => {
                 error={formikProps.touched.capacity ? formikProps.errors.capacity : ''}
                 handleBlur={formikProps.handleBlur('capacity')}
                 placeholder="Number"
+                data-cy="input-capacity"
               />
             </div>
             <div className="field field--city">
@@ -98,6 +125,7 @@ const AddStation = () => {
                 error={formikProps.touched.city ? formikProps.errors.city : ''}
                 handleBlur={formikProps.handleBlur('city')}
                 placeholder="i.e. Espoo"
+                data-cy="input-city"
               />
             </div>
             <div className="field field--operator">
@@ -108,8 +136,10 @@ const AddStation = () => {
                 error={formikProps.touched.operator ? formikProps.errors.operator : ''}
                 handleBlur={formikProps.handleBlur('operator')}
                 placeholder="i.e. City Bike Finland"
+                data-cy="input-operator"
               />
             </div>
+            <FormErrors shouldDisplay={formikProps.submitCount > 0} errors={[formikProps.errors.x]} />
             <div className="form-controls">
               <PrimaryButton type="submit" disabled={formState === FORM_STATE_LOADING}>
                 Apply
@@ -118,7 +148,7 @@ const AddStation = () => {
                 <SecondaryButton
                   disabled={formState === FORM_STATE_LOADING}
                   type="reset"
-                  onClick={formikProps.handleReset}
+                  onClick={(e: any) => handleFormReset(e, formikProps.handleReset)}
                 >
                   Reset
                 </SecondaryButton>
@@ -127,7 +157,7 @@ const AddStation = () => {
           </AddEntityForm>
         )}
       </Formik>
-      <Map points={points} />
+      <Map initialZoom={11} points={points} />
     </AddStationContainer>
   );
 };

@@ -13,9 +13,10 @@ interface MapPoint extends Coordinates {
 type Props = {
   points?: MapPoint[];
   initialCenter?: Coordinates;
+  initialZoom?: number;
 };
 
-const Map = ({ points = [], initialCenter }: Props) => {
+const Map = ({ points = [], initialCenter, initialZoom = 10 }: Props) => {
   const centerCoords = {
     lat: initialCenter?.y ? parseFloat(initialCenter.y) : HELSINKI_COORDINATES.lat,
     lng: initialCenter?.x ? parseFloat(initialCenter.x) : HELSINKI_COORDINATES.lng,
@@ -35,7 +36,7 @@ const Map = ({ points = [], initialCenter }: Props) => {
           }}
           apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_KEY}
           defaultCenter={centerCoords}
-          defaultZoom={10}
+          defaultZoom={initialZoom}
         >
           {points &&
             points

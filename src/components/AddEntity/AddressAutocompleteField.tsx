@@ -6,7 +6,12 @@ import debounce from 'lodash.debounce';
 import { AxiosError } from 'axios';
 
 const getGoogleAutocompleteSuggestions = debounce(
-  async (input = '', dataHandler: (suggestions: GooglePlace[]) => void, handleError: (error: AxiosError) => void) => {
+  async (
+    input = '',
+    dataHandler: (suggestions: GooglePlace[]) => void,
+    handleError: (error: AxiosError) => void,
+    clearError: () => void,
+  ) => {
     return client
       .get<any, { data: GoogleAutocompleteApiResponse }>('/lookup/autocomplete', {
         params: { input },
@@ -14,6 +19,7 @@ const getGoogleAutocompleteSuggestions = debounce(
       .then(({ data }: { data: { predictions: GooglePlace[] } }) => {
         const { predictions: suggestions } = data;
         dataHandler(suggestions);
+        clearError();
       })
       .catch(handleError);
   },
@@ -24,20 +30,41 @@ type Props = {
   value: string;
   setValue: (value: string) => void;
   onChooseOption: (option: GooglePlace) => void;
+  error?: string;
+  handleBlur: (e: any) => void;
+  autocompleteError: string;
+  setAutocompleteError: (error: string) => void;
+  testId?: string;
 };
 
-const AddressAutocompleteField = ({ onChooseOption, value, setValue }: Props) => {
+const AddressAutocompleteField = ({
+  onChooseOption,
+  value,
+  setValue,
+  error,
+  autocompleteError,
+  setAutocompleteError,
+  handleBlur,
+  testId,
+}: Props) => {
   const [placesSuggestions, setPlacesSuggestions] = useState<GooglePlace[]>([]);
-  const [error, setError] = useState('');
 
   const handleAutocompleteError = (error: AxiosError) => {
-    setError(`Failed to get autocomplete results: ${error.message}`);
+    setAutocompleteError(`Failed to get autocomplete results: ${error.message}`);
+  };
+
+  const clearAutocompleteError = () => {
+    setAutocompleteError('');
   };
 
   const handleInput = async (input: string) => {
-    setError('');
     setValue(input);
-    await getGoogleAutocompleteSuggestions(input, setPlacesSuggestions, handleAutocompleteError);
+    await getGoogleAutocompleteSuggestions(
+      input,
+      setPlacesSuggestions,
+      handleAutocompleteError,
+      clearAutocompleteError,
+    );
   };
 
   const handleChooseOption = (option: GooglePlace) => {
@@ -51,11 +78,13 @@ const AddressAutocompleteField = ({ onChooseOption, value, setValue }: Props) =>
       <FormTextField
         title="Address"
         value={value}
-        error={error}
+        data-cy={testId}
+        handleBlur={handleBlur}
+        error={error || autocompleteError}
         onChange={(e) => handleInput(e.target.value)}
         placeholder="Start typing and choose an option"
       />
-      {placesSuggestions && (
+      {value.length > 0 && placesSuggestions && (
         <div className="suggestions">
           {placesSuggestions.map((elt) => (
             <button
