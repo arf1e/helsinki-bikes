@@ -37,21 +37,25 @@ export const addStationInitialValues: TAddStationForm = {
 export const journeyValidationSchema = yup.object({
   [FIELD_DEPARTURE_STATION_ID]: yup
     .number()
-    .typeError('Please choose return station from autocomplete list.')
+    .typeError('Please choose departure station from autocomplete list.')
     .required('Please choose departure station from autocomplete list.'),
   [FIELD_RETURN_STATION_ID]: yup
     .number()
     .typeError('Please choose return station from autocomplete list.')
     .required('Please choose return station from autocomplete list.'),
-  departureDate: yup.date().required('Please enter departure date.'),
+  departureDate: yup
+    .date()
+    .typeError('Incorrect departure date value. Please enter it again.')
+    .required('Please enter departure date.'),
   returnDate: yup
     .date()
+    .typeError('Incorrect return date value. Please enter it again.')
     .required('Please enter return date.')
     .min(yup.ref('departureDate'), 'Return date should be at least after the start date.'),
   distance: yup
     .number()
-    .typeError('Please use numbers')
-    .required('Please fill distance')
+    .typeError('Please use numbers.')
+    .required('Please enter journey distance.')
     .min(10, 'Distance should be at least 10 meters long.'),
   [DEPARTURE_STATION_INPUT]: yup.string().required('Please enter departure station name.'),
   [RETURN_STATION_INPUT]: yup.string().required('Please enter return station name.'),

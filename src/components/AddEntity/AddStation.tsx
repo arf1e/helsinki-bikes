@@ -60,7 +60,7 @@ const AddStation = () => {
         throw new Error('Unexpected response code. Please check Network tab in your devtools.');
       })
       .catch((error) => {
-        const message = error.response?.data?.message || 'Failed to reach the server to create a new station.';
+        const message = error.response?.data?.message || 'Failed to reach the server to create new station.';
         notify({ status: 'error', message });
         setFormState(FORM_STATE_IDLE);
       });

@@ -35,9 +35,10 @@ type Props = {
   autocompleteError: string;
   setAutocompleteError: (error: string) => void;
   onBlur: (e: any) => void;
+  testId?: string;
 };
 
-const StationsAutocompleteField = ({
+const StationAutocompleteField = ({
   onChooseOption,
   value,
   setValue,
@@ -47,6 +48,7 @@ const StationsAutocompleteField = ({
   setAutocompleteError,
   autocompleteError,
   onBlur,
+  testId,
 }: Props) => {
   const [suggestions, setSuggestions] = useState<StationSuggestion[]>([]);
 
@@ -69,11 +71,6 @@ const StationsAutocompleteField = ({
     setSuggestions([]);
   };
 
-  const handleBlur = (e: any) => {
-    setSuggestions([]);
-    onBlur(e);
-  };
-
   return (
     <div className="field field--autocomplete">
       <FormTextField
@@ -82,7 +79,8 @@ const StationsAutocompleteField = ({
         onChange={(e) => handleInput(e.target.value)}
         value={value}
         error={error || autocompleteError}
-        handleBlur={handleBlur}
+        data-cy={testId}
+        handleBlur={onBlur}
       />
       {value.length > 0 && suggestions && (
         <div className="suggestions">
@@ -91,6 +89,7 @@ const StationsAutocompleteField = ({
               className="suggestions__suggestion"
               type="button"
               key={elt.id}
+              data-cy={`suggestion-${elt.id}`}
               onClick={() => handleChooseOption(elt)}
             >
               <strong className="suggestion-title">{elt.name}</strong>
@@ -103,4 +102,4 @@ const StationsAutocompleteField = ({
   );
 };
 
-export default StationsAutocompleteField;
+export default StationAutocompleteField;

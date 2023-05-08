@@ -5,7 +5,7 @@ import { Title } from '@/app/styled/Typography';
 import FormTextField from '../FormField';
 import { useReducer, useState } from 'react';
 import { PrimaryButton, SecondaryButton } from '@/app/styled/Buttons';
-import StationsAutocompleteField from './StationAutocompleteField';
+import StationAutocompleteField from './StationAutocompleteField';
 import { Formik, FormikProps } from 'formik';
 import { addJourneyInitialValues, isJourneyDurationLongEnough, journeyValidationSchema } from './AddEntity.utils';
 import { StationSuggestion } from '@/app/types/stations';
@@ -94,7 +94,7 @@ const AddJourney = () => {
         throw new Error('Unexpected response code. Please check Network tab in your devtools.');
       })
       .catch((error) => {
-        const message = error.response?.data?.message || 'Failed to reach the server to create a new station.';
+        const message = error.response?.data?.message || 'Failed to reach the server to create new journey.';
         notify({ status: 'error', message });
         setFormState(FORM_STATE_IDLE);
       });
@@ -140,18 +140,20 @@ const AddJourney = () => {
                 placeholder="Positive number (hopefully)"
                 error={formikProps.touched.distance ? formikProps.errors.distance : ''}
                 handleBlur={formikProps.handleBlur('distance')}
+                data-cy="input-distance"
               />
             </div>
-            <StationsAutocompleteField
+            <StationAutocompleteField
               value={formikProps.values[DEPARTURE_STATION_INPUT]}
               setValue={formikProps.handleChange(DEPARTURE_STATION_INPUT)}
               fieldTitle="Departure station"
               autocompleteError={autocompleteErrors[DEPARTURE_STATION_INPUT]}
               setAutocompleteError={(error) => handleAutocompleteError(error, DEPARTURE_STATION_INPUT)}
               error={formikProps.touched[DEPARTURE_STATION_INPUT] ? formikProps.errors[DEPARTURE_STATION_INPUT] : ''}
-              fieldPlaceholder="Start typing..."
+              fieldPlaceholder="Start typing and choose an option"
               onBlur={formikProps.handleBlur(DEPARTURE_STATION_INPUT)}
               onChooseOption={(option) => handleChooseStation(option, formikProps, FIELD_DEPARTURE_STATION_ID)}
+              testId="input-departure-station"
             />
             <div className="field">
               <label className="containing-label containing-label--date">
@@ -163,22 +165,24 @@ const AddJourney = () => {
                   onChange={formikProps.handleChange('departureDate')}
                   onBlur={formikProps.handleBlur('departureDate')}
                   error={formikProps.touched.departureDate ? formikProps.errors.departureDate : ''}
+                  data-cy="input-departure-date"
                 />
                 {formikProps.touched.departureDate && (
-                  <span className="field-error">{formikProps.errors.departureDate}</span>
+                  <span className="form-error">{formikProps.errors.departureDate}</span>
                 )}
               </label>
             </div>
-            <StationsAutocompleteField
+            <StationAutocompleteField
               value={formikProps.values.returnStationInput}
               setValue={formikProps.handleChange(RETURN_STATION_INPUT)}
               fieldTitle="Return station"
-              fieldPlaceholder="Start typing..."
+              fieldPlaceholder="Start typing and choose an option"
               autocompleteError={autocompleteErrors[RETURN_STATION_INPUT]}
               error={formikProps.touched[RETURN_STATION_INPUT] ? formikProps.errors[RETURN_STATION_INPUT] : ''}
               setAutocompleteError={(error) => handleAutocompleteError(error, RETURN_STATION_INPUT)}
               onBlur={formikProps.handleBlur(RETURN_STATION_INPUT)}
               onChooseOption={(option) => handleChooseStation(option, formikProps, FIELD_RETURN_STATION_ID)}
+              testId="input-return-station"
             />
             <div className="field">
               <label className="containing-label containing-label--date">
@@ -191,8 +195,9 @@ const AddJourney = () => {
                   error={formikProps.touched.returnDate ? formikProps.errors.returnDate : ''}
                   step="1"
                   onChange={handleDateChange(formikProps, 'returnDate')}
+                  data-cy="input-return-date"
                 />
-                {formikProps.touched.returnDate && <span className="field-error">{formikProps.errors.returnDate}</span>}
+                {formikProps.touched.returnDate && <span className="form-error">{formikProps.errors.returnDate}</span>}
               </label>
             </div>
             <FormErrors
@@ -203,13 +208,15 @@ const AddJourney = () => {
               <PrimaryButton type="submit" disabled={formState === FORM_STATE_LOADING}>
                 Submit
               </PrimaryButton>
-              <SecondaryButton
-                type="reset"
-                disabled={formState === FORM_STATE_LOADING}
-                onClick={(e: any) => handleFormReset(e, formikProps.handleReset)}
-              >
-                Reset
-              </SecondaryButton>
+              {formikProps.dirty && (
+                <SecondaryButton
+                  type="reset"
+                  disabled={formState === FORM_STATE_LOADING}
+                  onClick={(e: any) => handleFormReset(e, formikProps.handleReset)}
+                >
+                  Reset
+                </SecondaryButton>
+              )}
             </div>
           </AddEntityForm>
         )}
@@ -219,6 +226,7 @@ const AddJourney = () => {
           { ...points.departure, text: '1' },
           { ...points.return, text: '2' },
         ]}
+        initialZoom={12}
       />
     </AddJourneyContainer>
   );

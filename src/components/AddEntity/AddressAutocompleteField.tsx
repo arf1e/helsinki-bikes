@@ -90,6 +90,7 @@ const AddressAutocompleteField = ({
             <button
               className="suggestions__suggestion"
               type="button"
+              data-cy={`suggestion--${elt.place_id}`}
               key={elt.place_id}
               onClick={() => handleChooseOption(elt)}
             >
