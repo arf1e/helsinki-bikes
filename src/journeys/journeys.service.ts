@@ -23,7 +23,7 @@ export class JourneysService {
         ...(query.departureStationName && {
           departure: {
             name: {
-              startsWith: query.departureStationName,
+              startsWith: query.departureStationName.trim(),
               mode: 'insensitive',
             },
           },
@@ -31,7 +31,7 @@ export class JourneysService {
         ...(query.returnStationName && {
           return: {
             name: {
-              startsWith: query.returnStationName,
+              startsWith: query.returnStationName.trim(),
               mode: 'insensitive',
             },
           },

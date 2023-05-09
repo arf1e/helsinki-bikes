@@ -74,8 +74,9 @@ export class StationsService {
       },
       take: 5,
     });
+
     /*
-      As the 'include' option is not supported by 'groupBy', we need to retrieve station names by querying the database. 
+      As the 'include' option is not supported by 'groupBy' which would not let us to get station names, we need to retrieve station names by querying the database. 
       We can use Promise.all since it maintains the order of promises.
     */
     const topStationsWithNames = await Promise.all(
@@ -105,7 +106,7 @@ export class StationsService {
       where: {
         ...(query.name && {
           name: {
-            startsWith: query.name,
+            startsWith: query.name.trim(),
             mode: 'insensitive',
           },
         }),

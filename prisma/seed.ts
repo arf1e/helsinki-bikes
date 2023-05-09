@@ -1,7 +1,8 @@
 import { PrismaClient } from '@prisma/client';
-import { createReadStream } from 'fs';
+import { createReadStream, readFileSync, unlink } from 'fs';
 import * as csv from 'fast-csv';
 import * as path from 'path';
+import Downloader from 'nodejs-file-downloader';
 import {
   JOURNEYS_CSV_HEADERS,
   STATIONS_CSV_HEADERS,
@@ -10,6 +11,22 @@ import {
   stationSchema,
 } from '../utils/seeding';
 const prisma = new PrismaClient();
+
+const downloadCsvFromUrl = async (url: string, filename: string) => {
+  const downloader = new Downloader({
+    url,
+    directory: './downloads',
+    onBeforeSave: () => filename,
+  });
+  try {
+    const { filePath } = await downloader.download(); //Downloader.download() resolves with some useful properties.
+
+    console.log('All done');
+    return filePath;
+  } catch (error) {
+    console.log('Download failed', error);
+  }
+};
 
 /**
  * This function will read the given csv file and execute the given function on each row of data.
@@ -44,8 +61,7 @@ const handleCsvImport = (
 /**
  * This function will seed the database with stations data.
  */
-const seedStations = async () => {
-  const stationsPath = path.resolve(__dirname, '__fixtures__', 'stations.csv');
+const seedStations = async (filepath: string) => {
   const stations = [];
   const stationHandler = async (station) => {
     let castedStation;
@@ -60,7 +76,7 @@ const seedStations = async () => {
     }
   };
 
-  await handleCsvImport(stationsPath, stationHandler, STATIONS_CSV_HEADERS);
+  await handleCsvImport(filepath, stationHandler, STATIONS_CSV_HEADERS);
   await prisma.station
     .createMany({ data: stations, skipDuplicates: true })
     .catch(console.error);
@@ -75,11 +91,10 @@ const loadJourneysToTheDatabase = async (queue) => {
 };
 
 const seedJourneys = async (
+  filepath: string,
   stationIds: number[],
-  filename: string,
   queueSize = 1000,
 ) => {
-  const journeysPath = path.resolve(__dirname, '__fixtures__', filename);
   let journeysQueue = [];
   const journeysSchema = getJourneyValidationSchema(stationIds);
   const journeysHandler = async (journeyInput) => {
@@ -111,7 +126,7 @@ const seedJourneys = async (
     }
   };
 
-  await handleCsvImport(journeysPath, journeysHandler, JOURNEYS_CSV_HEADERS)
+  await handleCsvImport(filepath, journeysHandler, JOURNEYS_CSV_HEADERS)
     .then(() => {
       console.log(
         `FINISH CSV IMPORT, CURRENT QUEUE LENGTH: ${journeysQueue.length}`,
@@ -125,18 +140,48 @@ const seedJourneys = async (
     });
 };
 
+const loadEntities = (
+  urlArray: string[],
+  entity: 'stations' | 'journeys',
+  stationIds: number[] = [],
+) => {
+  return new Promise<void>(async (resolve) => {
+    if (entity === 'journeys') {
+      const stations = await prisma.station.findMany({ select: { id: true } });
+      stationIds = stations.map((station) => station.id);
+      console.log('JOURNEYS, SEEDING IDS:', stationIds);
+    }
+    const fMapper = {
+      stations: (csv: string) => seedStations(csv),
+      journeys: (csv: string) => seedJourneys(csv, stationIds),
+    };
+    const entityLoaderFunction = fMapper[entity];
+    await Promise.all(
+      urlArray.map(async (url, i) => {
+        const csv = await downloadCsvFromUrl(url, `${entity}-${i}.csv`);
+        await entityLoaderFunction(csv);
+        await unlink(csv, () => {
+          console.log(`File ${csv} has been deleted`);
+        });
+      }),
+    ).then(() => resolve());
+  });
+};
+
 /**
  * Function that will get executed on "seed" command.
  * All the seeding functions should be called here.
  */
 const main = async () => {
-  await seedStations();
-  const stations = await prisma.station.findMany({ select: { id: true } });
-  const stationIds = stations.map((station) => station.id);
-  await seedJourneys(stationIds, 'journeys-may.csv')
-    .then(() => seedJourneys(stationIds, 'journeys-june.csv'))
-    .then(() => seedJourneys(stationIds, 'journeys-july.csv'))
-    .then(() => console.timeEnd('Seeding'));
+  console.time('seeding');
+  const resourcesPath = path.join(__dirname, 'seed-data.json');
+  const resourcesJsonFile = readFileSync(resourcesPath, 'utf-8');
+  const { stations: stationsUrls, journeys: journeysUrls } =
+    JSON.parse(resourcesJsonFile);
+  await loadEntities(stationsUrls, 'stations');
+  await loadEntities(journeysUrls, 'journeys').then(() => {
+    console.timeEnd('seeding');
+  });
 };
 
 main().finally(async () => {
