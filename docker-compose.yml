@@ -8,7 +8,7 @@ services:
       - "3000:3000"
     environment:
       DATABASE_URL: postgresql://postgres:${DB_PASSWORD}@db:5432/bikeapp?pgbouncer=true&pool_timeout=0
-      GOOGLE_MAPS_KEY: AIzaSyBaflWt6miKwVvW8O6yHYVSEUrtVeHsYsk
+      GOOGLE_MAPS_KEY: ${GOOGLE_MAPS_KEY}
     depends_on: 
      - db
   db:
