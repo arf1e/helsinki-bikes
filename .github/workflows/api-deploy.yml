@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    uses: ./github/workflows/api-build-and-test.yml
+    uses: ./.github/workflows/api-build-and-test.yml
   build:
     runs-on: self-hosted
 
