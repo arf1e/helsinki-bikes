@@ -12,6 +12,13 @@ import {
 } from '../utils/seeding';
 const prisma = new PrismaClient();
 
+/**
+ * This function downloads csv file from provided url.
+ * Here I make use of nodejs-file-downloader, because it handles all write/read-stream heavylifting for me, and most importantly it handles HTTP redirects out of the box.
+ * @param url - Url of the file to be downloaded.
+ * @param filename - This parameter specifies the name to be given to the file when saving it.
+ * @returns filePath of the downloaded file
+ */
 const downloadCsvFromUrl = async (url: string, filename: string) => {
   const downloader = new Downloader({
     url,
@@ -19,9 +26,7 @@ const downloadCsvFromUrl = async (url: string, filename: string) => {
     onBeforeSave: () => filename,
   });
   try {
-    const { filePath } = await downloader.download(); //Downloader.download() resolves with some useful properties.
-
-    console.log('All done');
+    const { filePath } = await downloader.download();
     return filePath;
   } catch (error) {
     console.log('Download failed', error);
@@ -60,6 +65,7 @@ const handleCsvImport = (
 
 /**
  * This function will seed the database with stations data.
+ * @param filepath - Path to csv file containing stations data
  */
 const seedStations = async (filepath: string) => {
   const stations = [];
@@ -82,7 +88,7 @@ const seedStations = async (filepath: string) => {
     .catch(console.error);
 };
 
-const loadJourneysToTheDatabase = async (queue) => {
+const loadPortionOfJourneysToTheDatabase = async (queue) => {
   console.log(`Inserting ${queue.length} journeys to the database...`);
   return prisma.journey.createMany({
     data: queue,
@@ -117,7 +123,7 @@ const seedJourneys = async (
           : Math.floor(castedJourney.distance),
       });
       if (journeysQueue.length === queueSize) {
-        await loadJourneysToTheDatabase(journeysQueue)
+        await loadPortionOfJourneysToTheDatabase(journeysQueue)
           .then(() => {
             journeysQueue = [];
           })
@@ -132,7 +138,7 @@ const seedJourneys = async (
         `FINISH CSV IMPORT, CURRENT QUEUE LENGTH: ${journeysQueue.length}`,
       );
       return journeysQueue.length > 0
-        ? loadJourneysToTheDatabase(journeysQueue)
+        ? loadPortionOfJourneysToTheDatabase(journeysQueue)
         : null;
     })
     .then(() => {
@@ -140,16 +146,18 @@ const seedJourneys = async (
     });
 };
 
-const loadEntities = (
-  urlArray: string[],
-  entity: 'stations' | 'journeys',
-  stationIds: number[] = [],
-) => {
+/**
+ * Loads entity data from CSV files downloaded from the specified URLs, and seeds the data into the database.
+ * @param {string[]} urlArray - An array of URLs from which to download CSV files.
+ * @param {'stations' | 'journeys'} entity - The type of entity to load (either 'stations' or 'journeys').
+ * @returns {Promise<void>} - A Promise that resolves when all entities have been loaded and seeded into the database.
+ */
+const loadEntities = (urlArray: string[], entity: 'stations' | 'journeys') => {
   return new Promise<void>(async (resolve) => {
+    let stationIds;
     if (entity === 'journeys') {
       const stations = await prisma.station.findMany({ select: { id: true } });
       stationIds = stations.map((station) => station.id);
-      console.log('JOURNEYS, SEEDING IDS:', stationIds);
     }
     const fMapper = {
       stations: (csv: string) => seedStations(csv),
@@ -168,11 +176,28 @@ const loadEntities = (
   });
 };
 
+const checkIfDatabaseNeedsToBeSeeded = async (): Promise<boolean> => {
+  const journeysCount = await prisma.journey.count();
+  const stationsCount = await prisma.station.count();
+
+  if (journeysCount === 0 || stationsCount === 0) {
+    return true;
+  }
+
+  return false;
+};
+
 /**
  * Function that will get executed on "seed" command.
  * All the seeding functions should be called here.
  */
 const main = async () => {
+  const shouldRunSeedingScript = await checkIfDatabaseNeedsToBeSeeded();
+  if (!shouldRunSeedingScript) {
+    console.log('Database already has data, no seeding needed.');
+    return;
+  }
+  console.log('Database has no data, seeding...');
   console.time('seeding');
   const resourcesPath = path.join(__dirname, 'seed-data.json');
   const resourcesJsonFile = readFileSync(resourcesPath, 'utf-8');

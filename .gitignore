@@ -39,4 +39,3 @@ lerna-debug.log*
 
 # Database
 prisma/__fixtures__/*
-prisma/migrations
