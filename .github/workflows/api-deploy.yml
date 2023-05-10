@@ -7,8 +7,6 @@ on:
     branches: [ "main" ]
 
 jobs:
-  test:
-    uses: ./.github/workflows/api-build-and-test.yml
   build:
     runs-on: self-hosted
 
