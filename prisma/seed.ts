@@ -22,7 +22,7 @@ const prisma = new PrismaClient();
 const downloadCsvFromUrl = async (url: string, filename: string) => {
   const downloader = new Downloader({
     url,
-    directory: './downloads',
+    directory: path.join(__dirname, 'downloads'),
     onBeforeSave: () => filename,
   });
   try {
@@ -86,6 +86,7 @@ const seedStations = async (filepath: string) => {
   await prisma.station
     .createMany({ data: stations, skipDuplicates: true })
     .catch(console.error);
+  await resetStationsIdCounter(prisma);
 };
 
 const loadPortionOfJourneysToTheDatabase = async (queue) => {
@@ -210,6 +211,5 @@ const main = async () => {
 };
 
 main().finally(async () => {
-  await resetStationsIdCounter(prisma);
   await prisma.$disconnect();
 });
