@@ -1,6 +1,7 @@
 import { defineConfig } from 'cypress';
 
 export default defineConfig({
+  projectId: 'qmvwo3',
   component: {
     devServer: {
       framework: 'next',

@@ -64,12 +64,9 @@ describe('Stations Pagination', () => {
 });
 
 describe('Stations Notifications', () => {
-  beforeEach(() => {
-    cy.visit('/stations');
-  });
-
   it('indicates stations loading state', () => {
-    cy.intercept('GET', '/stations?*', { fixture: 'stations-mock.json', delay: 100 }).as('loadingStateApiMock');
+    cy.visit('/stations');
+    cy.intercept('GET', '**/stations?*', { fixture: 'stations-mock.json', delay: 100 }).as('loadingStateApiMock');
     cy.get('[data-cy="statusbar-LOADING"]').should('be.visible');
     cy.wait('@loadingStateApiMock');
     cy.get('[data-cy="statusbar-IDLE"]').should('exist');
@@ -77,7 +74,8 @@ describe('Stations Notifications', () => {
   });
 
   it('indicates stations error state and hides it after click', () => {
-    cy.intercept('GET', '/stations?*', {
+    cy.visit('/stations');
+    cy.intercept('GET', '**/stations?*', {
       statusCode: 400,
       body: {
         message: 'Test error',

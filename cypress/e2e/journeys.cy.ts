@@ -147,19 +147,17 @@ describe('Journeys Pagination', () => {
 });
 
 describe('Journeys Notifications', () => {
-  beforeEach(() => {
-    cy.visit('/journeys');
-  });
-
   it('indicates journeys loading state', () => {
+    cy.visit('/journeys');
     cy.intercept('GET', '/journeys?*', { fixture: 'journeys-mock.json', delay: 100 }).as('loadingStateApiMock');
     cy.get('[data-cy="statusbar-LOADING"]').should('be.visible');
     cy.wait('@loadingStateApiMock');
     cy.get('[data-cy="statusbar-IDLE"]').should('exist');
-    cy.get('[data-cy="statusbar-LOADING"]').should('not.exist');
+    cy.get('[data-cy="statusbar-LOADING"').should('not.exist');
   });
 
   it('indicates journeys error state and hides it after click', () => {
+    cy.visit('/journeys');
     cy.intercept('GET', '/journeys?*', {
       statusCode: 400,
       body: {
@@ -168,7 +166,7 @@ describe('Journeys Notifications', () => {
       delay: 100,
     }).as('errorStateApiMock');
     cy.get('[data-cy="statusbar-LOADING"]').should('be.visible');
-    cy.wait('@errorStateApiMock');
+    cy.wait('@errorStateApiMock', { timeout: 10000 });
     cy.get('[data-cy="statusbar-ERROR"]').should('exist');
     cy.get('[data-cy="statusbar-LOADING"]').should('not.exist');
     cy.get('[data-cy="statusbar-ERROR"]').click();

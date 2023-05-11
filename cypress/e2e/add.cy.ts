@@ -303,7 +303,7 @@ describe('New Journey Form', () => {
 
   it('errors if return date is before departure date', () => {
     cy.get('[data-cy="input-departure-date"]').type('2023-05-08T15:00:05');
-    cy.get('[data-cy="input-return-date"]').type('2023-05-07T15:00:05');
+    cy.get('[data-cy="input-return-date"]').type('2023-05-07T15:00:05').blur();
 
     cy.get('[data-cy="input-return-date"]').should('have.css', 'border-color', ERROR_COLOR_RGB);
     cy.get(
