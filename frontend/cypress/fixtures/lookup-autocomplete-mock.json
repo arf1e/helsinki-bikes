@@ -1,0 +1,14 @@
+{
+  "predictions": [
+    {
+      "place_id": "designergatan",
+      "main_text": "Designergatan",
+      "secondary_text": "Helsinki, Finland"
+    },
+    {
+      "place_id": "EiREZXNpbmduZXJzZ8OlcmRlbiwgSGVsc2lua2ksIEZpbmxhbmQiLiosChQKEglPiivzCQmSRhHpyqRv7h7zKBIUChIJAdICZ_IMkkYRtfGd9T9Qyf0",
+      "main_text": "Desingnersgården",
+      "secondary_text": "Helsinki, Finland"
+    }
+  ]
+}

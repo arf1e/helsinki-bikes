@@ -1,0 +1,155 @@
+{
+	"stations": [
+		{
+			"id": 1,
+			"name": "Kaivopuisto",
+			"address": "Meritori 1"
+		},
+		{
+			"id": 2,
+			"name": "Laivasillankatu",
+			"address": "Laivasillankatu 14"
+		},
+		{
+			"id": 3,
+			"name": "Kapteeninpuistikko",
+			"address": "Tehtaankatu 13"
+		},
+		{
+			"id": 4,
+			"name": "Viiskulma",
+			"address": "Fredrikinkatu 19"
+		},
+		{
+			"id": 5,
+			"name": "Sepänkatu",
+			"address": "Tehtaankatu 25"
+		},
+		{
+			"id": 6,
+			"name": "Hietalahdentori",
+			"address": "Hietalahdenkatu 2"
+		},
+		{
+			"id": 7,
+			"name": "Designmuseo",
+			"address": "Korkeavuorenkatu 23"
+		},
+		{
+			"id": 8,
+			"name": "Vanha kirkkopuisto",
+			"address": "Annankatu 16"
+		},
+		{
+			"id": 9,
+			"name": "Erottajan aukio",
+			"address": "Eteläesplanadi 22"
+		},
+		{
+			"id": 10,
+			"name": "Kasarmitori",
+			"address": "Fabianinkatu 13"
+		},
+		{
+			"id": 11,
+			"name": "Unioninkatu",
+			"address": "Eteläesplanadi 1"
+		},
+		{
+			"id": 12,
+			"name": "Kanavaranta",
+			"address": "Kanavaranta 1"
+		},
+		{
+			"id": 13,
+			"name": "Merisotilaantori",
+			"address": "Merisotilaantori"
+		},
+		{
+			"id": 14,
+			"name": "Senaatintori",
+			"address": "Aleksanterinkatu 22"
+		},
+		{
+			"id": 15,
+			"name": "Ritarikatu",
+			"address": "Ritarikatu 7"
+		},
+		{
+			"id": 16,
+			"name": "Liisanpuistikko",
+			"address": "Liisankatu 1"
+		},
+		{
+			"id": 17,
+			"name": "Varsapuistikko",
+			"address": "Yrjö-Koskisen katu 1"
+		},
+		{
+			"id": 18,
+			"name": "Porthania",
+			"address": "Yliopistonkatu 3"
+		},
+		{
+			"id": 19,
+			"name": "Rautatientori / itä",
+			"address": "Rautatientori 1"
+		},
+		{
+			"id": 20,
+			"name": "Kaisaniemenpuisto",
+			"address": "Bergbominkuja 1"
+		},
+		{
+			"id": 21,
+			"name": "Töölönlahdenkatu",
+			"address": "Elielinaukio 5"
+		},
+		{
+			"id": 22,
+			"name": "Rautatientori / länsi",
+			"address": "Kaivokatu 1"
+		},
+		{
+			"id": 23,
+			"name": "Kiasma",
+			"address": "Mannerheiminaukio 1"
+		},
+		{
+			"id": 24,
+			"name": "Mannerheimintie",
+			"address": "Mannerheiminitie 18"
+		},
+		{
+			"id": 25,
+			"name": "Narinkka",
+			"address": "Narinkka 1"
+		},
+		{
+			"id": 26,
+			"name": "Kamppi (M)",
+			"address": "Fredrikinkatu 44"
+		},
+		{
+			"id": 27,
+			"name": "Eerikinkatu",
+			"address": "Eerikinkatu 3"
+		},
+		{
+			"id": 28,
+			"name": "Lastenlehto",
+			"address": "Lapinrinne"
+		},
+		{
+			"id": 29,
+			"name": "Baana",
+			"address": "Ruoholahdenkatu 23"
+		},
+		{
+			"id": 30,
+			"name": "Itämerentori",
+			"address": "Itämerentori 1"
+		}
+	],
+	"totalPages": 10
+}

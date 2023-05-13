@@ -1,0 +1,215 @@
+{
+	"journeys": [
+		{
+			"id": 3126033,
+			"departureId": 94,
+			"returnId": 100,
+			"departureTime": "2021-05-31T20:57:25.000Z",
+			"returnTime": "2021-05-31T21:05:46.000Z",
+			"distance": 2043,
+			"duration": 500,
+			"departure": {
+				"name": "Laajalahden aukio"
+			},
+			"return": {
+				"name": "Teljäntie"
+			}
+		},
+		{
+			"id": 3126034,
+			"departureId": 82,
+			"returnId": 113,
+			"departureTime": "2021-05-31T20:56:59.000Z",
+			"returnTime": "2021-05-31T21:07:14.000Z",
+			"distance": 1870,
+			"duration": 611,
+			"departure": {
+				"name": "Töölöntulli"
+			},
+			"return": {
+				"name": "Pasilan asema"
+			}
+		},
+		{
+			"id": 3126035,
+			"departureId": 123,
+			"returnId": 121,
+			"departureTime": "2021-05-31T20:56:44.000Z",
+			"returnTime": "2021-05-31T21:03:26.000Z",
+			"distance": 1025,
+			"duration": 399,
+			"departure": {
+				"name": "Näkinsilta"
+			},
+			"return": {
+				"name": "Vilhonvuorenkatu"
+			}
+		},
+		{
+			"id": 3126036,
+			"departureId": 4,
+			"returnId": 65,
+			"departureTime": "2021-05-31T20:56:23.000Z",
+			"returnTime": "2021-05-31T21:29:58.000Z",
+			"distance": 4318,
+			"duration": 2009,
+			"departure": {
+				"name": "Viiskulma"
+			},
+			"return": {
+				"name": "Hernesaarenranta"
+			}
+		},
+		{
+			"id": 3126037,
+			"departureId": 4,
+			"returnId": 65,
+			"departureTime": "2021-05-31T20:56:11.000Z",
+			"returnTime": "2021-05-31T21:02:02.000Z",
+			"distance": 1400,
+			"duration": 350,
+			"departure": {
+				"name": "Viiskulma"
+			},
+			"return": {
+				"name": "Hernesaarenranta"
+			}
+		},
+		{
+			"id": 3126038,
+			"departureId": 292,
+			"returnId": 133,
+			"departureTime": "2021-05-31T20:54:48.000Z",
+			"returnTime": "2021-05-31T21:00:57.000Z",
+			"distance": 1713,
+			"duration": 366,
+			"departure": {
+				"name": "Koskelan varikko"
+			},
+			"return": {
+				"name": "Paavalinpuisto"
+			}
+		},
+		{
+			"id": 3126039,
+			"departureId": 34,
+			"returnId": 81,
+			"departureTime": "2021-05-31T20:54:11.000Z",
+			"returnTime": "2021-05-31T21:17:11.000Z",
+			"distance": 2550,
+			"duration": 1377,
+			"departure": {
+				"name": "Kansallismuseo"
+			},
+			"return": {
+				"name": "Stenbäckinkatu"
+			}
+		},
+		{
+			"id": 3126040,
+			"departureId": 240,
+			"returnId": 281,
+			"departureTime": "2021-05-31T20:53:04.000Z",
+			"returnTime": "2021-05-31T21:14:52.000Z",
+			"distance": 5366,
+			"duration": 1304,
+			"departure": {
+				"name": "Viikin normaalikoulu"
+			},
+			"return": {
+				"name": "Puotila (M)"
+			}
+		},
+		{
+			"id": 3126041,
+			"departureId": 116,
+			"returnId": 117,
+			"departureTime": "2021-05-31T20:52:03.000Z",
+			"returnTime": "2021-05-31T21:15:16.000Z",
+			"distance": 3344,
+			"duration": 1393,
+			"departure": {
+				"name": "Linnanmäki"
+			},
+			"return": {
+				"name": "Brahen puistikko"
+			}
+		},
+		{
+			"id": 3126042,
+			"departureId": 116,
+			"returnId": 145,
+			"departureTime": "2021-05-31T20:50:19.000Z",
+			"returnTime": "2021-05-31T21:05:58.000Z",
+			"distance": 3248,
+			"duration": 935,
+			"departure": {
+				"name": "Linnanmäki"
+			},
+			"return": {
+				"name": "Pohjolankatu"
+			}
+		},
+		{
+			"id": 3126043,
+			"departureId": 147,
+			"returnId": 232,
+			"departureTime": "2021-05-31T20:50:05.000Z",
+			"returnTime": "2021-05-31T21:01:22.000Z",
+			"distance": 1633,
+			"duration": 672,
+			"departure": {
+				"name": "Käpylän asema"
+			},
+			"return": {
+				"name": "Oulunkylän asema"
+			}
+		},
+		{
+			"id": 3126044,
+			"departureId": 69,
+			"returnId": 62,
+			"departureTime": "2021-05-31T20:50:00.000Z",
+			"returnTime": "2021-05-31T20:55:48.000Z",
+			"distance": 1131,
+			"duration": 345,
+			"departure": {
+				"name": "Kalevankatu"
+			},
+			"return": {
+				"name": "Välimerenkatu"
+			}
+		},
+		{
+			"id": 3126045,
+			"departureId": 147,
+			"returnId": 232,
+			"departureTime": "2021-05-31T20:49:59.000Z",
+			"returnTime": "2021-05-31T20:59:49.000Z",
+			"distance": 1695,
+			"duration": 589,
+			"departure": {
+				"name": "Käpylän asema"
+			},
+			"return": {
+				"name": "Oulunkylän asema"
+			}
+		},
+		{
+			"id": 3126046,
+			"departureId": 69,
+			"returnId": 62,
+			"departureTime": "2021-05-31T20:49:59.000Z",
+			"returnTime": "2021-05-31T20:55:38.000Z",
+			"distance": 1125,
+			"duration": 336,
+			"departure": {
+				"name": "Kalevankatu"
+			},
+			"return": {
+				"name": "Välimerenkatu"
+			}
+		}
+	],
+	"totalPages": 10
+}

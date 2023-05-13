@@ -1,0 +1,37 @@
+[
+  {
+    "id": 1,
+    "name": "Kaivopuisto",
+    "address": "Meritori 1",
+    "x": "24.9502114714031",
+    "y": "60.155369615074"
+  },
+  {
+    "id": 3,
+    "name": "Kapteeninpuistikko",
+    "address": "Tehtaankatu 13",
+    "x": "24.9450181631667",
+    "y": "60.1581769029949"
+  },
+  {
+    "id": 10,
+    "name": "Kasarmitori",
+    "address": "Fabianinkatu 13",
+    "x": "24.9494728793816",
+    "y": "60.165017172741"
+  },
+  {
+    "id": 12,
+    "name": "Kanavaranta",
+    "address": "Kanavaranta 1",
+    "x": "24.9584922784237",
+    "y": "60.1684959040351"
+  },
+  {
+    "id": 20,
+    "name": "Kaisaniemenpuisto",
+    "address": "Bergbominkuja 1",
+    "x": "24.9433556359399",
+    "y": "60.1732349001278"
+  }
+]
