@@ -27,5 +27,5 @@ jobs:
       env:
         NEXT_PUBLIC_GOOGLE_MAPS_KEY: ${{ secrets.GOOGLE_KEY }}
         NEXT_PUBLIC_API_URL: ${{ secrets.DEPLOY_API_URL }}
-    - run: make production 
+    - run: make deploy-script 
       
