@@ -24,8 +24,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
-      env:
-        NEXT_PUBLIC_GOOGLE_MAPS_KEY: ${{ secrets.GOOGLE_KEY }}
-        NEXT_PUBLIC_API_URL: ${{ secrets.DEPLOY_API_URL }}
+    - run: echo "NEXT_PUBLIC_GOOGLE_MAPS_KEY=${{ secrets.GOOGLE_KEY }}" >> .env.local
+    - run: echo "NEXT_PUBLIC_API_URL=${{ secrets.DEPLOY_API_URL }}" >> .env.local
     - run: make deploy-script 
       

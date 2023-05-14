@@ -6,7 +6,7 @@ production:
 deploy-script:
 				npm install
 				npm run build
-				pm2 restart frontend --update-env
+				pm2 restart frontend
 
 dev:
 				npm install
