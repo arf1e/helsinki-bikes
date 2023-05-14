@@ -1,0 +1,29 @@
+version: "3"
+services:
+
+  api:
+    build:
+      context: ./backend
+    ports:
+      - "3000:3000"
+    environment:
+      DATABASE_URL: postgresql://postgres:${DB_PASSWORD}@db:5432/bikeapp
+      GOOGLE_MAPS_KEY: ${GOOGLE_MAPS_KEY}
+    depends_on:
+      - db
+  db:
+    image: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: "bikeapp"
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "3001:3001"
+    environment:
+      NEXT_PUBLIC_GOOGLE_MAPS_KEY: ${GOOGLE_MAPS_KEY}
+      NEXT_PUBLIC_API_URL: http://api:3000/
