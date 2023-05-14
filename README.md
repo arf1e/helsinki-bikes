@@ -42,7 +42,7 @@
 <p>This is a project that I'm submitting as my <a href="https://github.com/solita/dev-academy-2023-exercise">pre-assignment for Solita Dev Academy 2023</a>. The goal was to create a full-stack app capable of creating and reading data about bike journeys and stations in Helsinki region. <br/> Backend is built with Nest.js, the frontend is implemented using Next.js.</p>
 <a href="https://bikeapp.egorushque.space/">🔗 Deployment link</a>
 
-<h2>✅ Implemented features</h2>
+<h2>Implemented features</h2>
 <ul>
   <li>CSV data import and validation</li>
   <li>Journeys list page: 
@@ -96,7 +96,7 @@
   </li>
 </ul>
 
-<h2>🪛 Technology choices</h2>
+<h2>Technology choices</h2>
 
 <ul>
   <li>
@@ -109,7 +109,11 @@
   </li>
    <li>
     <strong>Prisma</strong>
-    <p>When experimenting with a new backend framework, I decided to stick with my preferred ORM. If I had to select one favorite feature of Prisma, it would be the autocomplete for relations in the schema file.</p>
+    <p>When experimenting with a new backend framework, I decided to stick with my preferred ORM. Perfect with Typescript.</p>
+  </li>
+  <li>
+    <strong>Next.js</strong>
+    <p>I use Next.js every time I need some part of my frontend app to support SSR.</p>
   </li>
 </ul>
 
@@ -144,7 +148,11 @@ make production
 
 <p>This command will trigger <code>docker-compose up</code> command, which builds and starts backend, frontend and database containers. <br> Please note that this command will also trigger database seed script.</p>
 
-<h2>🧪 Running tests</h2>
+<strong>Step 4 — Open the app </strong>
+
+<p>Frontend is accessible at <code>localhost:3001</code> and you can also access backend at <code>localhost:3000</code></p>
+
+<h2>Running tests</h2>
 
 <h4>Backend</h4>
 <p>I use jest as a test runner for the backend, so this one is pretty straightforward:</p>
@@ -171,7 +179,49 @@ make dev-frontend
 <strong>Step 2 — Run Cypress </strong>
 
 <p>Open new terminal tab and run this command:</p>
+
 ```bash
 make test-frontend
 ```
+
 <p>This command will start Cypress runner. Start E2E testing in any browser from the list.</p>
+
+<h2>Running in dev mode</h2>
+
+<h4>Prerequisites</h4>
+<p>Please make sure you have your <code>DB_PASSWORD</code> and <code>GOOGLE_MAPS_KEY</code> properties in the <code>.env</code> at the root of the project. <br> Running database image is needed to run backend in dev mode, so you will once again need <a href="https://www.docker.com/products/docker-desktop/">Docker</a> installed on your system. </p>
+
+<h4>Backend</h4>
+```bash
+make dev-backend
+```
+<p>This command will create <code>backend/.env</code> file, install backend node_modules and start PostgreSQL Docker image. After that, the backend app is accessible at <code>localhost:3000</code></p>
+
+<h4>Side note: Seeding</h4>
+<p>Running the backend in dev mode does not trigger database seed command. Run this command to do so:</p>
+
+```bash
+make dev-seed
+```
+
+<p>During seeding, the app downloads csv files from urls in <code>backend/prisma/seed-data.json</code> and loads the data from them. You can edit this file in order to add/remove data sources.</p>
+
+<h4>Frontend</h4>
+
+```bash
+make dev-frontend
+```
+
+<p>This command will create <code>frontend/.env.local</code> file and start Next.js app in dev mode. Since then it is accessible at <code>localhost:3001</code></p>
+
+<h2>Note on this project's git history</h2>
+<p>I used git-subtrees to merge <a href="https://github.com/arf1e/solita-frontend">frontend</a> and <a href="https://github.com/arf1e/solita-backend">backend</a> projects in this repo. The whole git history of these projects is accessible here, however sometimes commit messages might be a bit confusing because there is no context on which "end" of the project this commit is for. You can see both histories in the corresponding repos, for this reason I will keep them public as well.
+</p>
+
+<h2>Links</h2>
+<ul>
+  <li><a href="https://www.figma.com/file/fbdL0fnm9EmmUFoviWeIfC/Solita?type=design&node-id=0%3A1&t=9hQrocmK4bebKjYY-1">Figma UI Project</a></li>
+  <li><a href="https://bikeapp.egorushque.space/">Deployment</a></li>
+  <li><a href="https://github.com/arf1e/solita-frontend">Frontend repository</a></li>
+  <li><a href="https://github.com/arf1e/solita-backend">Backend repository</a></li>
+</ul>
