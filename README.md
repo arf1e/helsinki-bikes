@@ -135,6 +135,7 @@ git clone https://github.com/arf1e/helsinki-bikes.git
 Apart from that, you will also need to come up with a password for PostgreSQL Database container. <br/>
 The content of <code>.env</code> file should contain these properties:
 </p>
+
 ```
 DB_PASSWORD=your-db-password
 GOOGLE_MAPS_KEY=your-google-maps-api-key
@@ -156,6 +157,7 @@ make production
 
 <h4>Backend</h4>
 <p>I use jest as a test runner for the backend, so this one is pretty straightforward:</p>
+
 ```bash
 make test-backend
 ```
@@ -192,9 +194,11 @@ make test-frontend
 <p>Please make sure you have your <code>DB_PASSWORD</code> and <code>GOOGLE_MAPS_KEY</code> properties in the <code>.env</code> at the root of the project. <br> Running database image is needed to run backend in dev mode, so you will once again need <a href="https://www.docker.com/products/docker-desktop/">Docker</a> installed on your system. </p>
 
 <h4>Backend</h4>
+
 ```bash
 make dev-backend
 ```
+
 <p>This command will create <code>backend/.env</code> file, install backend node_modules and start PostgreSQL Docker image. After that, the backend app is accessible at <code>localhost:3000</code></p>
 
 <h4>Side note: Seeding</h4>
