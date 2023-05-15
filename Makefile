@@ -35,8 +35,7 @@ dev-seed:
 
 test-frontend:
 				make generate-frontend-env
-				cd frontend && npm install
-				cd frontend && npm run cypress
+				cd frontend && make test
 
 test-backend:
 				make generate-backend-env
