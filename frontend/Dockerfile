@@ -2,6 +2,7 @@ FROM node:lts-alpine
 WORKDIR /solita-frontend
 
 COPY package*.json ./
+COPY .env.local ./
 RUN npm install
 
 COPY . .
