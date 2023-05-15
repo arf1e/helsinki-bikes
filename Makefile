@@ -11,3 +11,9 @@ deploy-script:
 dev:
 				npm install
 				npm run dev
+
+test:
+				npm install
+				npm run cypress
+
+.PHONY: test
