@@ -9,6 +9,8 @@ dev:
 				docker-compose -f docker-compose.dev.yml up -d
 				# install packages
 				npm install
+				# generate prisma client
+				npx prisma generate
 				# sync db schema
 				prisma migrate deploy
 				# run app in dev mode

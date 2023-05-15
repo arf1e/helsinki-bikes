@@ -1,7 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StationsService } from './stations.service';
 import { PrismaService } from 'src/prisma.service';
-import { STATIONS_PER_PAGE } from './stations.constants';
+import {
+  STATIONS_PER_PAGE,
+  TAKE_STATIONS_ON_SEARCH,
+} from './stations.constants';
 import { NotFoundException } from '@nestjs/common';
 
 describe('StationsService', () => {
@@ -73,6 +76,37 @@ describe('StationsService', () => {
             startsWith: testTextInput,
             mode: 'insensitive',
           },
+        },
+      });
+    });
+  });
+
+  describe('searchStations', () => {
+    it('returns empty array if no station name is provided', async () => {
+      const testQuery = { name: '' };
+      const result = await service.searchStations(testQuery);
+      mockPrismaService.station.findMany.mockClear();
+      expect(result).toMatchObject([]);
+      expect(mockPrismaService.station.findMany).not.toHaveBeenCalled();
+    });
+
+    it('passes expected values to the database query', async () => {
+      const testQuery = { name: 'test' };
+      service.searchStations(testQuery);
+      expect(mockPrismaService.station.findMany).toHaveBeenCalledWith({
+        where: {
+          name: {
+            startsWith: testQuery.name,
+            mode: 'insensitive',
+          },
+        },
+        take: TAKE_STATIONS_ON_SEARCH,
+        select: {
+          id: true,
+          name: true,
+          address: true,
+          x: true,
+          y: true,
         },
       });
     });
