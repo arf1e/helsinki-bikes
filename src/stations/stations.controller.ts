@@ -13,7 +13,9 @@ export class StationsController {
   }
 
   @Get()
-  findAll(@Query() stationPaginationQuery: StationPaginationQueryDto) {
+  findAll(
+    @Query() stationPaginationQuery: StationPaginationQueryDto,
+  ): Promise<{ stations: any[]; totalPages: number }> {
     return this.stationsService.findMany(stationPaginationQuery);
   }
 
