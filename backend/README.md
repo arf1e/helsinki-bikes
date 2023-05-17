@@ -33,7 +33,7 @@
 </div>
 
 <h1 align="center"> Helsinki Bikes Backend</h1>
-<p>This repository contains the backend part of my <a href="https://github.com/arf1e/helsinki-bikes">Solita Dev Academy 2023 Pre-assignment</a>. I use Nest.js as the backend framework and I work with the database using Prisma ORM. I have production build of this repository running at <a href="https://api.bikeapp.egorushque.space">api.backend.egorushque.space</a></p>
+<p>This repository contains the backend part of my <a href="https://github.com/arf1e/helsinki-bikes">Solita Dev Academy 2023 Pre-assignment</a>. <br> I use Nest.js as the backend framework and I work with the database using Prisma ORM. I have production build of this repository running at <a href="https://api.bikeapp.egorushque.space">api.backend.egorushque.space</a></p>
 
 <h2>Used Libraries</h2>
 <ul>
@@ -56,6 +56,10 @@
   <li>
     <strong>concurrently</strong>
     <p>I use it so my <code>start:migrate:prod</code> command would work on Windows machines, since Windows can't handle <code>&</code> terminal operator.</p>
+  </li>
+  <li>
+    <strong>Swagger</strong>
+    <p>Because I like when APIs have documentation.</p>
   </li>
 </ul>
 
