@@ -24,7 +24,7 @@ const StationTopStations = ({ topStations }: Props) => {
         <li className="top-stations-tables__table-container">
           <TopStationsTable top={topStations.toHere} />
           <p className="top-stations-tables__table-description">
-            Most popular return stations for journeys ending at this station
+            Most popular departure stations for journeys ending at this station
           </p>
         </li>
       </ul>
