@@ -121,7 +121,7 @@
 
 <strong>Step 0 – Prerequisites</strong>
 
-<p>You will need <a href="https://www.docker.com/products/docker-desktop/">Docker</a> installed on your system in order to run the project.</p>
+<p>You will need <a href="https://www.docker.com/products/docker-desktop/">Docker</a> installed on your system in order to run the project since my Makefile script uses docker-compose under the hood. Docker-compose comes together with Docker Desktop, but standalone installations of Docker Engine requires Docker Compose to be installed as a separate package, please see <a href="https://docs.docker.com/compose/install/linux/">this link</a> in that case.</p>
 
 <strong>Step 1 – Clone this repository</strong>
 
@@ -131,8 +131,14 @@ git clone https://github.com/arf1e/helsinki-bikes.git
 
 <strong>Step 2 — Create .env file at the root of the project</strong>
 
-<p>I use Google Maps for handling stations addresses and coordinates, so the app needs your <a href="https://developers.google.com/maps">Google Maps API credentials.</a>
-Apart from that, you will also need to come up with a password for PostgreSQL Database container. <br/>
+<p>I use Google Maps for handling stations addresses and coordinates, so the app needs your <a href="https://developers.google.com/maps">Google Maps API credentials.</a> <br/>
+Your API key should have access to those APIs:
+<ul>
+  <li>Geocoding API</li>
+  <li>Maps JavaScript API</li>
+  <li>Places API</li>
+</ul>
+Apart from that, you will also need to come up with a password for PostgreSQL Database container.<br/>
 The content of <code>.env</code> file should contain these properties:
 </p>
 
