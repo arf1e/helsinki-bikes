@@ -39,7 +39,7 @@
 </div>
 
 <h1>Helsinki Bike App - Solita Dev Academy Pre-Assignment</h1>
-<p>This is a project that I'm submitting as my <a href="https://github.com/solita/dev-academy-2023-exercise">pre-assignment for Solita Dev Academy 2023</a>. The goal was to create a full-stack app capable of creating and reading data about bike journeys and stations in Helsinki region. <br/> Backend is built with Nest.js, the frontend is implemented using Next.js.</p>
+<p>My submission for <a href="https://github.com/solita/dev-academy-2023-exercise">Solita Dev Academy 2023 pre-assignment</a>. The goal was to create a full-stack app capable of creating and reading data about bike journeys and stations in Helsinki region. <br/> Backend is built with Nest.js, the frontend is implemented using Next.js.</p>
 <a href="https://bikeapp.egorushque.com/">🔗 Deployment link</a>
 
 <h2>Implemented features</h2>
